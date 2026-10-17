@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="docs/fork-preview.png" alt="Weather Forecast Card enhanced fork preview" width="480" style="border-radius: 12px;">
+  <img src="docs/fork-preview.png" alt="HAWC weather forecast card preview" width="480" style="border-radius: 12px;">
   <br>
   <a href=https://www.home-assistant.io/><img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-Start-blue?logo=homeassistant&logoColor=fff&style=for-the-badge&labelColor=000"></a>
   <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=borgqueenx&repository=ha-weather-forecast-card&category=Dashboard"><img alt="HACS" src="https://img.shields.io/badge/HACS-custom%20fork-blue?logo=homeassistantcommunitystore&logoColor=fff&style=for-the-badge&labelColor=000"></a>
@@ -9,23 +9,23 @@
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge&labelColor=000"></a>
 </div>
 
-# Weather Forecast Card
+# HAWC — Highly Animated Weather Card
 
-A custom weather card for Home Assistant that displays current weather and forecast in a scrollable horizontal list or chart.
+The lovechild of [troinine's Weather Forecast Card](https://github.com/troinine/ha-weather-forecast-card) and [korova-sq's Sun Weather Card](https://github.com/korova-sq/sun-weather-card), bringing animated weather, a sun-and-moon timeline, and a configurable calendar agenda to Home Assistant.
 
 > [!NOTE]
 > This card is under active development and primarily built for my personal use cases but if you find it useful, feel free to use and share feedback!
 
-## Enhancements in this fork
+## About this fork
 
-This fork builds on the original Weather Forecast Card with a more configurable current-weather layout and additional details around the forecast:
+HAWC builds on the original Weather Forecast Card with a more configurable current-weather layout and additional details around the forecast:
 
 - An animated sunrise/sunset arc with a phase-aware moon marker at night, plus configurable clock and date placement.
 - Animated SVG weather icons across current, hourly, and daily forecasts, with a setting to switch back to static icons.
 - A calendar agenda for events today and tomorrow, with configurable position, sizes, tap action, and optional icon alerts.
 - Additional layout controls, including spacing and bottom-card trimming, plus wind-speed unit conversion.
 
-**A huge thank-you to [troinine](https://github.com/troinine), the maker of the original [Weather Forecast Card](https://github.com/troinine/ha-weather-forecast-card), and to [korova-sq](https://github.com/korova-sq), the maker of [Sun Weather Card](https://github.com/korova-sq/sun-weather-card).** This fork builds on troinine's excellent foundation and adapts animated weather SVGs from korova-sq's card. Their work made these additions possible. The adapted icon artwork and its license are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+**A huge thank-you to [troinine](https://github.com/troinine), creator of the [Weather Forecast Card](https://github.com/troinine/ha-weather-forecast-card), and [korova-sq](https://github.com/korova-sq), creator of [Sun Weather Card](https://github.com/korova-sq/sun-weather-card).** HAWC is a lovechild of their excellent work: it builds on troinine's card and adapts animated weather SVGs from korova-sq's card. The adapted icon artwork and its license are documented in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Why this card
 
