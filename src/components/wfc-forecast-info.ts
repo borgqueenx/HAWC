@@ -67,6 +67,7 @@ export class WfcForecastInfo extends LitElement {
         .hass=${this.hass}
         .weatherEntity=${this.weatherEntity}
         .forecast=${this.forecast}
+        .displayUnit=${this.config?.forecast?.wind_speed_unit ?? "entity"}
         .type="${attribute === "wind_direction" ? "direction" : "bearing"}"
       ></wfc-wind-indicator>`;
     } else {

@@ -62,6 +62,8 @@ const DEFAULT_CONFIG: Partial<WeatherForecastCardConfig> = {
   type: "custom:weather-forecast-card",
   show_current: true,
   show_forecast: true,
+  animated_icons: true,
+  show_moon_phase: true,
   default_forecast: "daily",
   forecast_types: "both",
   forecast: {
@@ -69,6 +71,33 @@ const DEFAULT_CONFIG: Partial<WeatherForecastCardConfig> = {
     show_sun_times: true,
     use_color_thresholds: true,
     scroll_to_selected: true,
+  },
+  current: {
+    show_time: true,
+    show_date: true,
+    datetime_position: "top",
+    datetime_offset: 0,
+    datetime_weather_gap: 0,
+    show_sun_path: true,
+    show_agenda: true,
+    agenda_tap_action: {
+      action: "navigate",
+      navigation_path: "/lovelace/calendar",
+    },
+    agenda_icon_no_event_size: 40,
+    agenda_text_no_event_size: 14,
+    agenda_icon_today_size: 40,
+    agenda_text_today_size: 14,
+    agenda_icon_tomorrow_size: 40,
+    agenda_text_tomorrow_size: 14,
+    agenda_position: "right",
+    agenda_sun_gap: 12,
+    agenda_alert: true,
+    bottom_padding: 0,
+    agenda_alert_today_size: 122,
+    agenda_alert_today_speed: 3.2,
+    agenda_alert_tomorrow_size: 110,
+    agenda_alert_tomorrow_speed: 5.2,
   },
   forecast_action: {
     tap_action: { action: "toggle-forecast" },
@@ -86,6 +115,7 @@ export class WeatherForecastCard extends LitElement {
   @state() private _hourlyForecastEvent?: ForecastEvent | undefined;
   @state() private _currentItemWidth!: number;
   @state() private _currentForecastType: ForecastType = "daily";
+  @state() private _forecastTapFeedback = false;
   @state() private _isScrollable = false;
   @query("ha-card") private _haCard?: HTMLElement;
   @query(".wfc-forecast-container") private _forecastContainer?: HTMLElement;
@@ -186,18 +216,17 @@ export class WeatherForecastCard extends LitElement {
    * Reports sizing to Home Assistant's Sections view so the card snaps to whole
    * grid rows instead of taking an arbitrary fractional height.
    *
-   * Row counts are derived from the enabled blocks; the content is vertically
-   * centered (see CSS) when the user sizes the card taller than it needs, so a
-   * slightly generous estimate only adds whitespace rather than clipping.
+   * Leave the row count unset so sections view can size the card to its content.
+   * A fixed default row span leaves a blank track below content after trimming.
    */
   public getGridOptions(): LovelaceGridOptions {
-    const { rows, minRows, minColumns } = this.computeRowSizing();
-
     return {
       columns: 12,
-      rows,
-      min_rows: minRows,
-      min_columns: minColumns,
+      min_columns:
+        this.config?.show_current !== false &&
+        this.config?.show_forecast !== false
+          ? 6
+          : 4,
     };
   }
 
@@ -206,35 +235,47 @@ export class WeatherForecastCard extends LitElement {
    * block accounting as {@link getGridOptions}.
    */
   public getCardSize(): number {
-    return this.computeRowSizing().rows;
+    return this.computeMasonryCardSize();
   }
 
   /**
-   * Derives the card's grid sizing from the enabled blocks (current weather and
-   * the simple/chart forecast). Pure function of the config with no `hass`/DOM
-   * dependency, so it is safe to call before the first render.
+   * Estimates card size for masonry column balancing. Pure function of config.
    */
-  private computeRowSizing(): {
-    rows: number;
-    minRows: number;
-    minColumns: number;
-  } {
+  private computeMasonryCardSize(): number {
     const showCurrent = this.config?.show_current !== false;
     const showForecast = this.config?.show_forecast !== false;
     const isChart = this.config?.forecast?.mode === ForecastMode.Chart;
 
-    // Base allowance for card padding and the gap between blocks.
-    let rows = 1;
-    let minRows = 1;
+    // Base allowance for card padding and the gap between blocks. Keep this
+    // estimate in sync with the adjustable card bottom spacing so masonry and
+    // section grids do not reserve a blank row after the rendered card.
+    const bottomSpacing = Math.max(
+      0,
+      16 +
+        Math.max(-100, Math.min(100, this.config?.current?.bottom_padding ?? 0))
+    );
+    const paddingRowDelta = Math.ceil(bottomSpacing / 50) - 1;
+    let rows = 1 + paddingRowDelta;
 
     if (showCurrent) {
       // Conditions icon + name + temperature.
       rows += 2;
-      minRows += 2;
 
       // The optional attribute list adds a variable amount of height; reserve a
       // little extra so the default size does not clip a typical attribute list.
       if (this.config?.current?.show_attributes) {
+        rows += 1;
+      }
+
+      // The clock/date header and sunrise/sunset path add two short rows above
+      // and below the conditions. Reserve space for each enabled block.
+      if (
+        this.config?.current?.show_time !== false ||
+        this.config?.current?.show_date !== false
+      ) {
+        rows += 1;
+      }
+      if (this.config?.current?.show_sun_path !== false) {
         rows += 1;
       }
     }
@@ -243,19 +284,13 @@ export class WeatherForecastCard extends LitElement {
       if (isChart) {
         // Optional settings bar + 130px chart + header/footer labels.
         rows += 3;
-        minRows += 3;
       } else {
         // Simple forecast column (time + icon + temperature + precipitation).
         rows += 2;
-        minRows += 2;
       }
     }
 
-    return {
-      rows,
-      minRows,
-      minColumns: showCurrent && showForecast ? 6 : 4,
-    };
+    return Math.max(1, rows);
   }
 
   public connectedCallback(): void {
@@ -356,9 +391,18 @@ export class WeatherForecastCard extends LitElement {
       getDailyForecastType(stateObject) === "twice_daily";
     const isChartMode = this.config.forecast?.mode === ForecastMode.Chart;
     const currentForecast = this.getCurrentForecast();
-
+    const bottomPaddingAdjustment = Math.max(
+      -100,
+      Math.min(100, this.config.current?.bottom_padding ?? 0)
+    );
+    const bottomPaddingOperation =
+      bottomPaddingAdjustment < 0
+        ? `- ${Math.abs(bottomPaddingAdjustment)}`
+        : `+ ${bottomPaddingAdjustment}`;
     return html`
-      <ha-card>
+      <ha-card
+        style="height: auto; padding-bottom: max(0px, calc(var(--card-padding, 16px) ${bottomPaddingOperation}px))"
+      >
         ${this.config.show_condition_effects
           ? html`<wfc-animation-provider
               .hass=${this.hass}
@@ -390,7 +434,11 @@ export class WeatherForecastCard extends LitElement {
             : nothing}
           ${this.config.show_forecast === false
             ? nothing
-            : html`<div class="wfc-forecast-container">
+            : html`<div
+                class="wfc-forecast-container ${this._forecastTapFeedback
+                  ? "wfc-day-tap-feedback"
+                  : ""}"
+              >
                 ${isChartMode
                   ? html`<wfc-forecast-chart
                       @action=${this.onForecastAction}
@@ -599,6 +647,13 @@ export class WeatherForecastCard extends LitElement {
     this._currentForecastType = isInDailyLikeView
       ? "hourly"
       : effectiveDailyType;
+
+    if (willSwitchToHourly) {
+      this._forecastTapFeedback = true;
+      window.setTimeout(() => {
+        this._forecastTapFeedback = false;
+      }, 650);
+    }
 
     if (!selectedForecast || !this.config?.forecast?.scroll_to_selected) {
       return;

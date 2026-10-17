@@ -180,6 +180,247 @@ ha-card {
   width: 100%;
 }
 
+.wfc-current-datetime {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--wfc-component-gap);
+  min-width: 0;
+}
+.wfc-datetime-top {
+  margin-bottom: var(--wfc-datetime-weather-gap, 0px);
+}
+.wfc-datetime-bottom {
+  margin-top: var(--wfc-datetime-weather-gap, 0px);
+}
+
+.wfc-current-clock {
+  font-size: var(--ha-font-size-3xl, 28px);
+  line-height: 1.1;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.wfc-current-date {
+  color: var(--weather-forecast-card-date-color, #fff);
+  font-size: var(--ha-font-size-m, 14px);
+  line-height: 1.1;
+  text-align: right;
+}
+
+.wfc-sun-agenda-row {
+  display: flex;
+  align-items: center;
+  gap: var(--wfc-agenda-sun-gap, var(--wfc-component-gap));
+  min-width: 0;
+  width: 100%;
+}
+
+.wfc-sun-path {
+  flex: 1 1 55%;
+  min-width: 120px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.wfc-sun-arc {
+  display: block;
+  width: 100%;
+  height: 62px;
+  overflow: visible;
+}
+.wfc-sun-time-label {
+  fill: var(--primary-text-color);
+  font-size: 12px;
+  font-weight: 600;
+}
+.wfc-sun-caption-label {
+  fill: var(--secondary-text-color);
+  font-size: 10px;
+}
+.wfc-moon-arc-marker {
+  overflow: visible;
+}
+.wfc-sun-arc-track {
+  fill: none;
+  stroke: var(--secondary-text-color);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 4;
+  opacity: 0.65;
+}
+.wfc-sun-arc-progress {
+  fill: none;
+  stroke: var(--weather-forecast-card-sunrise-color, #ffb300);
+  stroke-width: 1.4;
+}
+.wfc-sun-arc-progress-night {
+  stroke: #fff;
+}
+.wfc-sun-arc-sun {
+  fill: var(--weather-forecast-card-sunrise-color, #ffb300);
+  stroke: var(--weather-forecast-card-sunrise-color, #ffb300);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.wfc-sun-arc-sun-glow {
+  stroke: none;
+  opacity: 0.28;
+}
+.wfc-sun-arc-sun-disc {
+  stroke: var(--ha-card-background, #fff);
+  stroke-width: 1.2;
+}
+.wfc-sun-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--ha-font-size-s, 12px);
+  line-height: 1.2;
+}
+.wfc-sun-times span {
+  display: flex;
+  flex-direction: column;
+}
+.wfc-sun-times span:last-child {
+  text-align: right;
+}
+.wfc-sun-times strong {
+  font-weight: 600;
+}
+.wfc-sun-times small {
+  color: var(--secondary-text-color);
+}
+
+.wfc-agenda {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 45%;
+  align-items: flex-start;
+  flex-direction: row;
+  gap: 8px;
+  font-size: var(--ha-font-size-m, 14px);
+  min-width: 0;
+  max-width: 45%;
+}
+.wfc-agenda-icon {
+  box-sizing: border-box;
+  width: var(--wfc-agenda-icon-size, 40px);
+  height: var(--wfc-agenda-icon-size, 40px);
+  flex: 0 0 var(--wfc-agenda-icon-size, 40px);
+  margin-top: 1px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+  transform-origin: center;
+}
+.wfc-agenda-left .wfc-agenda {
+  padding-left: calc(
+    var(--forecast-item-width, 65px) / 2 - var(--wfc-agenda-icon-size, 40px) / 2
+  );
+}
+.wfc-agenda-items {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--wfc-agenda-text-size, 14px);
+  min-width: 0;
+  width: 100%;
+}
+
+.wfc-agenda-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  width: 100%;
+  line-height: 1.2;
+}
+.wfc-agenda-icon-alert-today {
+  animation: wfc-agenda-pulse-today var(--wfc-agenda-alert-speed, 3.2s)
+    ease-in-out infinite;
+}
+.wfc-agenda-icon-alert-tomorrow {
+  animation: wfc-agenda-pulse-tomorrow var(--wfc-agenda-alert-speed, 5.2s)
+    ease-in-out infinite;
+}
+@keyframes wfc-agenda-pulse-today {
+  0%,
+  100% {
+    color: inherit;
+    opacity: 0.75;
+    filter: drop-shadow(0 0 0 rgba(144, 238, 144, 0));
+    scale: 1;
+  }
+  50% {
+    color: #90ee90;
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(144, 238, 144, 0.95));
+    scale: var(--wfc-agenda-alert-scale, 1.22);
+  }
+}
+@keyframes wfc-agenda-pulse-tomorrow {
+  0%,
+  100% {
+    color: inherit;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 0 rgba(144, 238, 144, 0));
+    scale: 1;
+  }
+  50% {
+    color: #90ee90;
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(144, 238, 144, 0.75));
+    scale: var(--wfc-agenda-alert-scale, 1.1);
+  }
+}
+.wfc-agenda-time {
+  color: var(--secondary-text-color);
+  font-size: 0.86em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wfc-agenda-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  height: 2.4em;
+  line-height: 1.2;
+  overflow: hidden;
+  font-size: 1em;
+}
+.wfc-agenda[role="button"] {
+  cursor: pointer;
+}
+.wfc-agenda-empty {
+  color: var(--secondary-text-color);
+  font-size: 0.86em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wfc-agenda-left .wfc-agenda {
+  order: -1;
+}
+.wfc-agenda-left .wfc-sun-path {
+  margin-left: auto;
+}
+
+@media (max-width: 420px) {
+  .wfc-sun-agenda-row {
+    gap: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wfc-agenda-icon-alert-today,
+  .wfc-agenda-icon-alert-tomorrow {
+    animation: none;
+    color: #90ee90;
+  }
+}
+
 .wfc-current-conditions {
   display: flex;
   flex-direction: row;
@@ -248,16 +489,22 @@ ha-card {
 }
 
 wfc-animation-provider.dark[has-clouds] ~ .wfc-container .wfc-current-state,
-wfc-animation-provider.dark[has-clouds] ~ .wfc-container .wfc-current-temperature {
+wfc-animation-provider.dark[has-clouds]
+  ~ .wfc-container
+  .wfc-current-temperature {
   text-shadow: var(--wfc-effects-text-shadow);
 }
 
 wfc-animation-provider.dark[has-clouds] ~ .wfc-container .wfc-name,
-wfc-animation-provider.dark[has-clouds] ~ .wfc-container .wfc-current-secondary-value {
+wfc-animation-provider.dark[has-clouds]
+  ~ .wfc-container
+  .wfc-current-secondary-value {
   text-shadow: var(--wfc-effects-text-shadow-secondary);
 }
 
-wfc-animation-provider.dark[has-clouds] ~ .wfc-container .wfc-current-secondary-icon {
+wfc-animation-provider.dark[has-clouds]
+  ~ .wfc-container
+  .wfc-current-secondary-icon {
   filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.5));
 }
 
@@ -529,6 +776,14 @@ wfc-animation-provider.dark[has-clouds] ~ .wfc-container .wfc-current-secondary-
   cursor: grab;
 }
 
+.wfc-weather-condition-icon-slot > svg,
+.wfc-weather-condition-icon-slot > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .wfc-weather-condition-icon-slot .rain {
   fill: var(--weather-icon-rain-color, #30b3ff);
 }
@@ -665,5 +920,25 @@ wfc-weather-condition-icon-provider {
   .wfc-current-state,
   .wfc-current-temperature {
     font-size: var(--ha-font-size-xl, 20px);
+  }
+}
+
+.wfc-forecast-container.wfc-day-tap-feedback {
+  animation: wfc-day-tap-feedback 650ms ease-out;
+}
+@keyframes wfc-day-tap-feedback {
+  0% {
+    filter: brightness(1);
+  }
+  35% {
+    filter: brightness(1.18);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wfc-forecast-container.wfc-day-tap-feedback {
+    animation: none;
   }
 }

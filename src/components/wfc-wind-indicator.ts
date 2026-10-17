@@ -5,8 +5,48 @@ import {
   ForecastAttribute,
   getNormalizedWindBearing,
   getNormalizedWindSpeed,
+  getWeatherUnit,
   WeatherEntity,
 } from "../data/weather";
+import { ForecastWindSpeedUnit } from "../types";
+
+const WIND_SPEED_TO_METERS_PER_SECOND: Record<string, number> = {
+  "m/s": 1,
+  ms: 1,
+  mps: 1,
+  "km/h": 1 / 3.6,
+  kmh: 1 / 3.6,
+  kph: 1 / 3.6,
+  "mi/h": 0.44704,
+  mph: 0.44704,
+  milesperhour: 0.44704,
+  "ft/s": 0.3048,
+  "in/s": 0.0254,
+  kn: 0.514444,
+  kt: 0.514444,
+  knot: 0.514444,
+  knots: 0.514444,
+};
+
+const normalizeWindSpeedUnit = (unit: string): string =>
+  unit.trim().toLocaleLowerCase().replace(/\s+/g, "");
+
+const convertWindSpeed = (
+  speed: number,
+  fromUnit: string,
+  toUnit: string
+): number | undefined => {
+  const fromFactor = WIND_SPEED_TO_METERS_PER_SECOND[
+    normalizeWindSpeedUnit(fromUnit)
+  ];
+  const toFactor = WIND_SPEED_TO_METERS_PER_SECOND[
+    normalizeWindSpeedUnit(toUnit)
+  ];
+  if (fromFactor === undefined || toFactor === undefined) {
+    return undefined;
+  }
+  return (speed * fromFactor) / toFactor;
+};
 
 @customElement("wfc-wind-indicator")
 export class WfcWindIndicator extends LitElement {
@@ -16,6 +56,7 @@ export class WfcWindIndicator extends LitElement {
   @property({ attribute: false }) size = 35;
   @property({ attribute: false }) radius = 20;
   @property({ attribute: false }) type: "bearing" | "direction" = "bearing";
+  @property({ attribute: false }) displayUnit: ForecastWindSpeedUnit = "entity";
 
   static styles = css`
     :host {
@@ -35,7 +76,16 @@ export class WfcWindIndicator extends LitElement {
       return nothing;
     }
 
-    const windSpeed = this.forecast.wind_speed || 0;
+    const rawWindSpeed = this.forecast.wind_speed || 0;
+    const sourceUnit = getWeatherUnit(this.hass, this.weatherEntity, "wind_speed");
+    const targetUnit = this.displayUnit === "entity" ? sourceUnit : this.displayUnit;
+    const convertedSpeed = convertWindSpeed(
+      rawWindSpeed,
+      sourceUnit,
+      targetUnit
+    );
+    const windSpeed = convertedSpeed ?? rawWindSpeed;
+    const shownUnit = convertedSpeed === undefined ? sourceUnit : targetUnit;
     const windBearing = getNormalizedWindBearing(this.forecast);
 
     const R = this.radius;
@@ -67,8 +117,8 @@ export class WfcWindIndicator extends LitElement {
         viewBox="0 0 ${boxSize} ${boxSize}"
         role="img"
         aria-label="${hasBearing
-          ? `Wind speed: ${speed}, bearing: ${bearing} degrees`
-          : `Wind speed: ${speed}`}"
+          ? `Wind speed: ${speed} ${shownUnit}, bearing: ${bearing} degrees`
+          : `Wind speed: ${speed} ${shownUnit}`}"
       >
         <circle
           cx="${cx}"

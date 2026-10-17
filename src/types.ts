@@ -83,6 +83,13 @@ export type CurrentWeatherAttributesLayout =
 
 export type WeatherEffect = (typeof WEATHER_EFFECTS)[number];
 
+export type ForecastWindSpeedUnit =
+  | "entity"
+  | "km/h"
+  | "m/s"
+  | "mph"
+  | "kn";
+
 export enum ForecastMode {
   Chart = "chart",
   Simple = "simple",
@@ -98,6 +105,7 @@ export interface ForecastSelectAttributeActionConfig extends BaseActionConfig {
 
 export interface WeatherForecastCardForecastConfig {
   extra_attribute?: string;
+  wind_speed_unit?: ForecastWindSpeedUnit;
   mode?: ForecastMode;
   show_sun_times?: boolean;
   hourly_group_size?: number;
@@ -111,6 +119,29 @@ export interface WeatherForecastCardForecastConfig {
 }
 
 export interface WeatherForecastCardCurrentConfig {
+  show_time?: boolean;
+  show_date?: boolean;
+  datetime_position?: "top" | "bottom";
+  datetime_offset?: number;
+  datetime_weather_gap?: number;
+  show_sun_path?: boolean;
+  show_agenda?: boolean;
+  agenda_entities?: string[];
+  agenda_tap_action?: ActionConfig;
+  agenda_icon_no_event_size?: number;
+  agenda_text_no_event_size?: number;
+  agenda_icon_today_size?: number;
+  agenda_text_today_size?: number;
+  agenda_icon_tomorrow_size?: number;
+  agenda_text_tomorrow_size?: number;
+  agenda_position?: "left" | "right";
+  agenda_sun_gap?: number;
+  agenda_alert?: boolean;
+  agenda_alert_today_size?: number;
+  agenda_alert_today_speed?: number;
+  agenda_alert_tomorrow_size?: number;
+  agenda_alert_tomorrow_speed?: number;
+  bottom_padding?: number;
   show_attributes?:
     | boolean
     | CurrentWeatherAttributes
@@ -118,7 +149,9 @@ export interface WeatherForecastCardCurrentConfig {
     | CurrentWeatherAttributeConfig
     | (CurrentWeatherAttributes | CurrentWeatherAttributeConfig)[];
   temperature_precision?: number;
-  secondary_info_attribute?: CurrentWeatherAttributes | CurrentWeatherAttributeConfig;
+  secondary_info_attribute?:
+    | CurrentWeatherAttributes
+    | CurrentWeatherAttributeConfig;
   temperature_entity?: string;
   attributes_layout?: CurrentWeatherAttributesLayout;
 }
@@ -140,6 +173,7 @@ export interface WeatherForecastCardConfig {
   default_forecast?: "hourly" | "daily";
   forecast_types?: ForecastTypesOption;
   icons_path?: string;
+  animated_icons?: boolean;
   show_condition_effects?: boolean | WeatherEffect[];
   show_moon_phase?: boolean;
   current?: WeatherForecastCardCurrentConfig;

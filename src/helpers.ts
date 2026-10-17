@@ -304,7 +304,7 @@ const entityOf = (item: unknown): string | undefined => {
 /**
  * Collects the entity ids the current-weather section reads from `hass.states`
  * beyond the primary weather entity: the temperature sensor, the secondary info
- * entity and any custom entities used in `show_attributes`. Used to keep the
+ * entity, calendar entities and any custom entities used in `show_attributes`. Used to keep the
  * card reactive to those sensors (see `shouldUpdate`); the primary `entity` is
  * intentionally excluded because `hasConfigOrEntityChanged` already tracks it.
  */
@@ -320,6 +320,10 @@ export const getReferencedCurrentEntities = (
 
   if (current.temperature_entity) {
     ids.add(current.temperature_entity);
+  }
+
+  for (const entityId of current.agenda_entities ?? []) {
+    ids.add(entityId);
   }
 
   const secondaryEntity = entityOf(current.secondary_info_attribute);

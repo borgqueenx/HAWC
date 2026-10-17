@@ -44,12 +44,25 @@ const ATTRIBUTE_DEVICE_CLASS_MAP: Record<
 };
 
 type HaFormSelector =
-  | { entity: { domain?: string; device_class?: string | string[] } }
+  | {
+      entity: {
+        domain?: string;
+        device_class?: string | string[];
+        multiple?: boolean;
+      };
+    }
   | { boolean: {} }
   | { text: {} }
   | { icon: {} }
   | { entity_name: {} }
-  | { number: { min?: number; max?: number } }
+  | {
+      number: {
+        min?: number;
+        max?: number;
+        step?: number;
+        unit_of_measurement?: string;
+      };
+    }
   | { ui_action: { default_action: string } }
   | {
       select: {
@@ -241,10 +254,194 @@ export class WeatherForecastCardEditor
         default: true,
         optional: true,
       },
+      {
+        name: "animated_icons",
+        selector: { boolean: {} },
+        default: true,
+        optional: true,
+      },
     ] as const;
 
   private _currentWeatherSchema = (localize: LocalizeFunc): HaFormSchema[] =>
     [
+      {
+        name: "current.show_time",
+        selector: { boolean: {} },
+        default: true,
+        optional: true,
+      },
+      {
+        name: "current.show_date",
+        selector: { boolean: {} },
+        default: true,
+        optional: true,
+      },
+      {
+        name: "current.datetime_position",
+        selector: {
+          select: {
+            options: [
+              { value: "top", label: "Top" },
+              { value: "bottom", label: "Bottom" },
+            ],
+          },
+        },
+        default: "top",
+        optional: true,
+      },
+      {
+        name: "current.datetime_offset",
+        selector: { number: { min: 0, max: 200 } },
+        default: 0,
+        optional: true,
+      },
+      {
+        name: "current.datetime_weather_gap",
+        selector: {
+          number: { min: -100, max: 100, step: 1, unit_of_measurement: "px" },
+        },
+        default: 0,
+        optional: true,
+      },
+      {
+        name: "current.bottom_padding",
+        selector: {
+          number: { min: -100, max: 100, step: 1, unit_of_measurement: "px" },
+        },
+        default: 0,
+        optional: true,
+      },
+      {
+        name: "current.show_sun_path",
+        selector: { boolean: {} },
+        default: true,
+        optional: true,
+      },
+      {
+        name: "current.show_agenda",
+        selector: { boolean: {} },
+        default: true,
+        optional: true,
+      },
+      {
+        name: "current.agenda_entities",
+        selector: { entity: { domain: "calendar", multiple: true } },
+        optional: true,
+      },
+      {
+        name: "current.agenda_tap_action",
+        selector: {
+          ui_action: {
+            default_action: "navigate",
+          },
+        },
+        optional: true,
+      },
+      {
+        name: "current.agenda_icon_no_event_size",
+        selector: {
+          number: { min: 16, max: 80, step: 1, unit_of_measurement: "px" },
+        },
+        default: 40,
+        optional: true,
+      },
+      {
+        name: "current.agenda_text_no_event_size",
+        selector: {
+          number: { min: 8, max: 32, step: 1, unit_of_measurement: "px" },
+        },
+        default: 14,
+        optional: true,
+      },
+      {
+        name: "current.agenda_icon_today_size",
+        selector: {
+          number: { min: 16, max: 80, step: 1, unit_of_measurement: "px" },
+        },
+        default: 40,
+        optional: true,
+      },
+      {
+        name: "current.agenda_text_today_size",
+        selector: {
+          number: { min: 8, max: 32, step: 1, unit_of_measurement: "px" },
+        },
+        default: 14,
+        optional: true,
+      },
+      {
+        name: "current.agenda_icon_tomorrow_size",
+        selector: {
+          number: { min: 16, max: 80, step: 1, unit_of_measurement: "px" },
+        },
+        default: 40,
+        optional: true,
+      },
+      {
+        name: "current.agenda_text_tomorrow_size",
+        selector: {
+          number: { min: 8, max: 32, step: 1, unit_of_measurement: "px" },
+        },
+        default: 14,
+        optional: true,
+      },
+      {
+        name: "current.agenda_position",
+        selector: {
+          select: {
+            options: [
+              { value: "left", label: "Left" },
+              { value: "right", label: "Right" },
+            ],
+          },
+        },
+        default: "right",
+        optional: true,
+      },
+      {
+        name: "current.agenda_sun_gap",
+        selector: { number: { min: 0, max: 100 } },
+        default: 12,
+        optional: true,
+      },
+      {
+        name: "current.agenda_alert",
+        selector: { boolean: {} },
+        default: true,
+        optional: true,
+      },
+      {
+        name: "current.agenda_alert_today_size",
+        selector: {
+          number: { min: 100, max: 150, step: 1, unit_of_measurement: "%" },
+        },
+        default: 122,
+        optional: true,
+      },
+      {
+        name: "current.agenda_alert_today_speed",
+        selector: {
+          number: { min: 1, max: 12, step: 0.1, unit_of_measurement: "s" },
+        },
+        default: 3.2,
+        optional: true,
+      },
+      {
+        name: "current.agenda_alert_tomorrow_size",
+        selector: {
+          number: { min: 100, max: 150, step: 1, unit_of_measurement: "%" },
+        },
+        default: 110,
+        optional: true,
+      },
+      {
+        name: "current.agenda_alert_tomorrow_speed",
+        selector: {
+          number: { min: 1, max: 12, step: 0.1, unit_of_measurement: "s" },
+        },
+        default: 5.2,
+        optional: true,
+      },
       {
         name: "current.temperature_entity",
         selector: {
@@ -377,6 +574,23 @@ export class WeatherForecastCardEditor
             ],
           },
         },
+      },
+      {
+        name: "forecast.wind_speed_unit",
+        selector: {
+          select: {
+            mode: "dropdown",
+            options: [
+              { value: "entity", label: "Home Assistant weather unit" },
+              { value: "km/h", label: "km/h" },
+              { value: "m/s", label: "m/s" },
+              { value: "mph", label: "mph" },
+              { value: "kn", label: "knots" },
+            ],
+          },
+        },
+        default: "entity",
+        optional: true,
       },
       {
         name: "forecast.scroll_to_selected",
@@ -714,10 +928,7 @@ export class WeatherForecastCardEditor
     this._commitCustomAttributes(custom);
   };
 
-  private _customAttributeChanged = (
-    index: number,
-    ev: CustomEvent
-  ): void => {
+  private _customAttributeChanged = (index: number, ev: CustomEvent): void => {
     ev.stopPropagation();
     const custom = extractCustomAttributes(
       this._config.current?.show_attributes
@@ -845,10 +1056,60 @@ export class WeatherForecastCardEditor
             "ui.panel.lovelace.editor.card.generic.attribute"
           ) || "attribute"
         ).toLocaleLowerCase()}`;
+      case "forecast.wind_speed_unit":
+        return "Wind speed display unit";
       case "forecast.mode":
         return "Forecast display mode";
       case "current.temperature_precision":
         return "Current temperature precision";
+      case "current.show_time":
+        return "Show time";
+      case "current.show_date":
+        return "Show date";
+      case "current.datetime_position":
+        return "Time and date position";
+      case "current.datetime_offset":
+        return "Move time and date up (px)";
+      case "current.datetime_weather_gap":
+        return "Gap between clock and current weather (px)";
+      case "current.bottom_padding":
+        return "Bottom spacing adjustment (px)";
+      case "current.show_sun_path":
+        return "Show sunrise and sunset arc";
+      case "current.show_agenda":
+        return "Show agenda";
+      case "current.agenda_entities":
+        return "Calendar entities";
+      case "current.agenda_tap_action":
+        return "Agenda tap action";
+      case "current.agenda_icon_no_event_size":
+        return "No-event agenda icon size (px)";
+      case "current.agenda_text_no_event_size":
+        return "No-event agenda text size (px)";
+      case "current.agenda_icon_today_size":
+        return "Today's agenda icon size (px)";
+      case "current.agenda_text_today_size":
+        return "Today's agenda text size (px)";
+      case "current.agenda_icon_tomorrow_size":
+        return "Tomorrow's agenda icon size (px)";
+      case "current.agenda_text_tomorrow_size":
+        return "Tomorrow's agenda text size (px)";
+      case "current.agenda_position":
+        return "Agenda position";
+      case "current.agenda_sun_gap":
+        return "Gap between agenda and sun arc (px)";
+      case "current.agenda_alert":
+        return "Pulse agenda for upcoming events";
+      case "current.agenda_alert_today_size":
+        return "Today's icon pulse maximum (%)";
+      case "current.agenda_alert_today_speed":
+        return "Today's alert speed (s)";
+      case "current.agenda_alert_tomorrow_size":
+        return "Tomorrow's icon pulse maximum (%)";
+      case "current.agenda_alert_tomorrow_speed":
+        return "Tomorrow's alert speed (s)";
+      case "animated_icons":
+        return "Animated weather icons";
       case "forecast.temperature_precision":
         return "Forecast temperature precision";
       case "forecast.scroll_to_selected":
@@ -898,6 +1159,43 @@ export class WeatherForecastCardEditor
     switch (schema.name) {
       case "current.temperature_entity":
         return "Optional temperature sensor entity to override the weather entity's temperature.";
+      case "current.agenda_entities":
+        return "Show the next event from each selected calendar when it starts today or tomorrow.";
+      case "current.agenda_tap_action":
+        return "Choose what happens when you tap the agenda. Defaults to opening /lovelace/calendar.";
+      case "current.agenda_icon_no_event_size":
+      case "current.agenda_icon_today_size":
+      case "current.agenda_icon_tomorrow_size":
+        return "Set this state's base calendar icon size. Today's and tomorrow's alert pulse scales are applied on top.";
+      case "current.agenda_text_no_event_size":
+      case "current.agenda_text_today_size":
+      case "current.agenda_text_tomorrow_size":
+        return "Set this state's fixed text size. Text does not pulse, and long lines end with an ellipsis.";
+      case "current.show_agenda":
+        return "Show upcoming events from the selected calendars. Only events starting today or tomorrow are shown; an empty-state message appears when there are none.";
+      case "current.agenda_position":
+        return "Place upcoming calendar events to the left or right of the sunrise and sunset arc.";
+      case "current.agenda_sun_gap":
+        return "Set the horizontal space between the agenda and sunrise/sunset arc.";
+      case "current.agenda_alert":
+        return "The calendar icon pulses from its normal size up to the configured maximum for an event. It stays static when there are no events. Tomorrow's alert can be slower and smaller.";
+      case "current.agenda_alert_today_size":
+        return "Set the icon's pulse maximum relative to its separately configured base size. Only the icon pulses.";
+      case "current.agenda_alert_tomorrow_size":
+        return "Set the icon's pulse maximum relative to its separately configured base size. Only the icon pulses.";
+      case "current.agenda_alert_today_speed":
+      case "current.agenda_alert_tomorrow_speed":
+        return "Set the duration of one pulse cycle in seconds.";
+      case "current.datetime_position":
+        return "Place the time and date above or below the current weather details.";
+      case "current.datetime_offset":
+        return "Move the date and clock upward by this many pixels. Set to 0 for the default position.";
+      case "current.datetime_weather_gap":
+        return "Adjust the vertical gap between the date/time row and current weather. Negative values reduce the default gap; positive values add space.";
+      case "current.bottom_padding":
+        return "Negative values remove empty space below the card content, down to zero padding. Positive values add space. The card and weather effects follow the resulting content height; content is not clipped.";
+      case "animated_icons":
+        return "Use the animated SVG weather icons. Turn this off to use the same icons without animation.";
       case "default_forecast":
         return "Select the default forecast type to show when forecasts are enabled. Users can still toggle between hourly and daily forecasts if both are available.";
       case "forecast_types":
@@ -908,6 +1206,8 @@ export class WeatherForecastCardEditor
         return "Select a weather attribute to display as secondary information in the current weather section.";
       case "forecast.extra_attribute":
         return "Select an extra attribute to display below each forecast.";
+      case "forecast.wind_speed_unit":
+        return "Applies to the number in wind direction/bearing badges. Home Assistant weather unit keeps the unit reported by your weather entity.";
       case "forecast_interactions":
         return "Action to perform when the forecast section is interacted with. Default tap action toggles between hourly and daily forecasts.";
       case "interactions":
@@ -1026,7 +1326,11 @@ export class WeatherForecastCardEditor
         );
         newConfig.current.show_attributes = buildShowAttributes(
           newConfig.current.show_attributes,
-          { entity: entityOverrides, label: labelOverrides, icon: iconOverrides },
+          {
+            entity: entityOverrides,
+            label: labelOverrides,
+            icon: iconOverrides,
+          },
           customItems
         );
       }
