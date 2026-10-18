@@ -9,7 +9,7 @@ import "../src/index";
 import { TEST_FORECAST_DAILY, TEST_FORECAST_HOURLY } from "./mocks/test-data";
 import { normalizeDate } from "../src/helpers";
 
-describe("weather-forecast-card", () => {
+describe("hawc-card", () => {
   const mockHassInstance = new MockHass();
   mockHassInstance.dailyForecast = TEST_FORECAST_DAILY;
   mockHassInstance.hourlyForecast = TEST_FORECAST_HOURLY;
@@ -28,10 +28,10 @@ describe("weather-forecast-card", () => {
 
   beforeEach(async () => {
     card = await fixture<WeatherForecastCard>(
-      html`<weather-forecast-card
+      html`<hawc-card
         .hass=${hass}
         .config=${testConfig}
-      ></weather-forecast-card>`
+      ></hawc-card>`
     );
 
     expect(card).not.toBeNull();
@@ -610,10 +610,10 @@ describe("weather-forecast-card", () => {
   describe("reconnection and popup scenarios", () => {
     it("should establish subscriptions when reconnected to DOM with hasUpdated=true", async () => {
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -655,10 +655,10 @@ describe("weather-forecast-card", () => {
 
     it("should unsubscribe after a sustained disconnection", async () => {
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -689,10 +689,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -712,10 +712,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -733,10 +733,10 @@ describe("weather-forecast-card", () => {
 
     it("should not create duplicate subscriptions on reconnect", async () => {
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -775,10 +775,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -810,10 +810,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -838,10 +838,10 @@ describe("weather-forecast-card", () => {
 
     it("should render forecast data after reconnection", async () => {
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -882,10 +882,10 @@ describe("weather-forecast-card", () => {
       };
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${dailyConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(dailyConfig);
@@ -910,10 +910,10 @@ describe("weather-forecast-card", () => {
       };
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${hourlyConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(hourlyConfig);
@@ -936,10 +936,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -983,10 +983,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -1026,10 +1026,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -1061,10 +1061,10 @@ describe("weather-forecast-card", () => {
       const testHass = forecastHass.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${testHass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);
@@ -1130,10 +1130,10 @@ describe("weather-forecast-card", () => {
       const baseHass = mockHassInstance.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${baseHass}
           .config=${reactiveConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(reactiveConfig);
@@ -1162,10 +1162,10 @@ describe("weather-forecast-card", () => {
       const baseHass = mockHassInstance.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${baseHass}
           .config=${reactiveConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(reactiveConfig);
@@ -1193,10 +1193,10 @@ describe("weather-forecast-card", () => {
       };
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${baseHass}
           .config=${config}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(config);
@@ -1234,10 +1234,10 @@ describe("weather-forecast-card", () => {
       };
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${baseHass}
           .config=${config}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(config);
@@ -1262,10 +1262,10 @@ describe("weather-forecast-card", () => {
       const baseHass = mockHassInstance.getHass() as ExtendedHomeAssistant;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${baseHass}
           .config=${reactiveConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(reactiveConfig);
@@ -1298,10 +1298,10 @@ describe("weather-forecast-card", () => {
       forecastHass.hourlyForecast = TEST_FORECAST_HOURLY;
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${forecastHass.getHass() as ExtendedHomeAssistant}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(testConfig);

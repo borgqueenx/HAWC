@@ -52,10 +52,10 @@ describe("daily-only forecast", () => {
 
     beforeEach(async () => {
       card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       expect(card).not.toBeNull();
@@ -184,10 +184,10 @@ describe("daily-only forecast", () => {
       };
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${config}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(config);
@@ -215,10 +215,10 @@ describe("daily-only forecast", () => {
 
     beforeEach(async () => {
       card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       expect(card).not.toBeNull();
@@ -314,10 +314,10 @@ describe("no forecast support", () => {
     };
 
     const card = await fixture<WeatherForecastCard>(
-      html`<weather-forecast-card
+      html`<hawc-card
         .hass=${hass}
         .config=${config}
-      ></weather-forecast-card>`
+      ></hawc-card>`
     );
 
     card.setConfig(config);
@@ -345,10 +345,10 @@ describe("no forecast support", () => {
     };
 
     const card = await fixture<WeatherForecastCard>(
-      html`<weather-forecast-card
+      html`<hawc-card
         .hass=${hass}
         .config=${config}
-      ></weather-forecast-card>`
+      ></hawc-card>`
     );
 
     card.setConfig(config);
@@ -377,10 +377,10 @@ describe("no forecast support", () => {
     };
 
     const card = await fixture<WeatherForecastCard>(
-      html`<weather-forecast-card
+      html`<hawc-card
         .hass=${hass}
         .config=${config}
-      ></weather-forecast-card>`
+      ></hawc-card>`
     );
 
     card.setConfig(config);

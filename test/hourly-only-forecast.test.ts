@@ -52,10 +52,10 @@ describe("hourly-only forecast", () => {
 
     beforeEach(async () => {
       card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       expect(card).not.toBeNull();
@@ -183,10 +183,10 @@ describe("hourly-only forecast", () => {
       };
 
       const testCard = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${config}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       testCard.setConfig(config);
@@ -236,10 +236,10 @@ describe("hourly-only forecast", () => {
 
     beforeEach(async () => {
       card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
 
       expect(card).not.toBeNull();

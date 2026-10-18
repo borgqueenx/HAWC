@@ -8,7 +8,7 @@ function createCard(
   config: Partial<WeatherForecastCardConfig> = {}
 ): WeatherForecastCard {
   const card = document.createElement(
-    "weather-forecast-card"
+    "hawc-card"
   ) as WeatherForecastCard;
 
   card.setConfig({

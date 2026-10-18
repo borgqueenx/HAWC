@@ -36,10 +36,10 @@ describe("time format rendering", () => {
 
     it("should render single-row time labels for hourly forecast", async () => {
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(testConfig);
       await card.updateComplete;
@@ -79,10 +79,10 @@ describe("time format rendering", () => {
 
     it("should render single-row day labels for daily forecast", async () => {
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(testConfig);
       await card.updateComplete;
@@ -115,10 +115,10 @@ describe("time format rendering", () => {
 
     it("should render two-row time labels for hourly forecast with AM/PM", async () => {
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(testConfig);
       await card.updateComplete;
@@ -168,10 +168,10 @@ describe("time format rendering", () => {
 
     it("should render two-row day labels for daily forecast with day of month", async () => {
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(testConfig);
       await card.updateComplete;
@@ -210,10 +210,10 @@ describe("time format rendering", () => {
 
     it("should ensure consistent height between daily and hourly views", async () => {
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(testConfig);
       await card.updateComplete;
@@ -283,10 +283,10 @@ describe("time format rendering", () => {
 
     it("should use single-row layout for German 24-hour hourly format", async () => {
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${testConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(testConfig);
       await card.updateComplete;
@@ -329,10 +329,10 @@ describe("time format rendering", () => {
       };
 
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${sunTimesConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(sunTimesConfig);
       await card.updateComplete;
@@ -384,10 +384,10 @@ describe("time format rendering", () => {
       };
 
       const card = await fixture<WeatherForecastCard>(
-        html`<weather-forecast-card
+        html`<hawc-card
           .hass=${hass}
           .config=${sunTimesConfig}
-        ></weather-forecast-card>`
+        ></hawc-card>`
       );
       card.setConfig(sunTimesConfig);
       await card.updateComplete;

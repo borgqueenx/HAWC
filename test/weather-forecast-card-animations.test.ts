@@ -406,10 +406,10 @@ const createFixture = async (
   };
 
   const element = await fixture<WeatherForecastCard>(
-    html`<weather-forecast-card
+    html`<hawc-card
       .hass=${hass}
       .config=${config}
-    ></weather-forecast-card>`
+    ></hawc-card>`
   );
 
   element.setConfig(config);

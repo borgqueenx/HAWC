@@ -545,14 +545,14 @@ describe("weather-forecast-card chart", () => {
     };
 
     const card = await fixture<WeatherForecastCard>(html`
-      <weather-forecast-card
+      <hawc-card
         .hass=${hass}
         .config=${{
           type: "custom:hawc-card",
           entity: "weather.demo",
           forecast: { mode: ForecastMode.Chart },
         }}
-      ></weather-forecast-card>
+      ></hawc-card>
     `);
 
     const chartElement = card.shadowRoot!.querySelector(

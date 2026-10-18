@@ -33,10 +33,10 @@ describe("weather-forecast-card simple", () => {
 
   beforeEach(async () => {
     card = await fixture<WeatherForecastCard>(
-      html`<weather-forecast-card
+      html`<hawc-card
         .hass=${hass}
         .config=${testConfig}
-      ></weather-forecast-card>`
+      ></hawc-card>`
     );
 
     expect(card).not.toBeNull();
