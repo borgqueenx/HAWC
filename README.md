@@ -393,6 +393,7 @@ show_condition_effects:
   - rain
   - snow
   - lightning
+  - fog
 ```
 
 **Disable all effects (default):**
@@ -405,7 +406,7 @@ show_condition_effects: false
 
 ### Available Effects
 
-The card provides seven different effect types that can be individually enabled or disabled:
+The card provides eight different effect types that can be individually enabled or disabled:
 
 | Effect Type     | Description                                                                                                                                                                                                                                                                                                                                                                                          | Weather Conditions Applied                             |
 | :-------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------- |
@@ -416,6 +417,7 @@ The card provides seven different effect types that can be individually enabled 
 | **`sun`**       | Animated sun with rotating rays positioned at the top of the card. Creates a warm, dynamic daytime atmosphere. Automatically switches to moon effect after sunset if sun times are shown.                                                                                                                                                                                                            | `sunny`, `partlycloudy`                                |
 | **`moon`**      | Photorealistic moon using a NASA lunar surface image, glowing above animated twinkling stars scattered across the card. By default it is shaded to match the current lunar phase for your location, with the glow following the sunlit limb (disable phase shading with `show_moon_phase: false`). Stars have randomized positions, sizes, and twinkle animations for a serene nighttime atmosphere. | `clear-night`, `partlycloudy`/`sunny` (with sun times) |
 | **`cloud`**     | Soft, realistic clouds drifting across the sky, their speed influenced by wind. `cloudy` shows a fuller grey deck over an overcast sky; `partlycloudy` shows a few lighter clouds alongside the sun or moon. Clouds are dimmed at night.                                                                                                                                                             | `cloudy`, `partlycloudy`                               |
+| **`fog`**       | Three soft, translucent fog banks drift at different speeds and heights to create a layered mist effect without obscuring the card. Motion respects reduced-motion preferences.                                                                                                                                                                                                                     | `fog`                                                  |
 
 ## Custom Icons
 

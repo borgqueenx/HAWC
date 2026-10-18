@@ -15,6 +15,7 @@
   --drop-height: var(--weather-forecast-card-effects-drop-height, 20px);
   --drop-start-pos-diff-y: 50px;
   --snow-glow-color: var(--snow-color);
+  --fog-color: rgba(225, 235, 245, 0.32);
   --container-height: 0px; /* Set dynamically in TS */
 
   display: block;
@@ -176,6 +177,7 @@
     rgba(48, 55, 68, 0.5)
   );
   --cloud-color: var(--weather-forecast-card-effects-cloud-color, #dfe6ee);
+  --fog-color: rgba(215, 226, 242, 0.24);
 }
 
 /* Modern browsers with color-mix support */
@@ -405,6 +407,53 @@
   background: none;
 }
 
+/* Slow, overlapping fog sheets add depth without washing out the whole card. */
+.fog {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.fog-bank {
+  position: absolute;
+  left: -35%;
+  width: 170%;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--fog-color) 42%,
+    var(--fog-color) 58%,
+    transparent 100%
+  );
+  filter: blur(14px);
+  will-change: transform, opacity;
+}
+
+.fog-bank-back {
+  top: 24%;
+  height: 34%;
+  opacity: 0.45;
+  animation: fog-drift-back 42s ease-in-out infinite alternate;
+}
+
+.fog-bank-middle {
+  top: 42%;
+  height: 31%;
+  opacity: 0.62;
+  animation: fog-drift-middle 32s ease-in-out infinite alternate;
+}
+
+.fog-bank-front {
+  top: 59%;
+  height: 29%;
+  opacity: 0.42;
+  animation: fog-drift-front 38s ease-in-out infinite alternate;
+}
+
 .moon-body {
   position: absolute;
   top: calc(var(--moon-size) * -0.32);
@@ -626,6 +675,39 @@
   }
 }
 
+@keyframes fog-drift-back {
+  from {
+    transform: translate3d(4%, -3px, 0) scaleX(0.96);
+    opacity: 0.34;
+  }
+  to {
+    transform: translate3d(-4%, 3px, 0) scaleX(1.04);
+    opacity: 0.5;
+  }
+}
+
+@keyframes fog-drift-middle {
+  from {
+    transform: translate3d(-5%, 3px, 0) scaleX(1.03);
+    opacity: 0.48;
+  }
+  to {
+    transform: translate3d(5%, -4px, 0) scaleX(0.97);
+    opacity: 0.68;
+  }
+}
+
+@keyframes fog-drift-front {
+  from {
+    transform: translate3d(5%, -2px, 0) scaleX(0.98);
+    opacity: 0.34;
+  }
+  to {
+    transform: translate3d(-5%, 2px, 0) scaleX(1.03);
+    opacity: 0.52;
+  }
+}
+
 @keyframes twinkle {
   0%,
   100% {
@@ -795,5 +877,11 @@
   /* Stay dark until end */
   100% {
     opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fog-bank {
+    animation: none;
   }
 }
