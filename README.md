@@ -53,6 +53,8 @@ This card takes inspiration from [Weather Forecast Extended Card](https://github
 
 This fork is not part of the default HACS catalog. Add `borgqueenx/HAWC` as a custom Dashboard repository in HACS, or use the link below to open this fork in your Home Assistant instance:
 
+Found a problem or have an idea? [Open an issue on HAWC](https://github.com/borgqueenx/HAWC/issues).
+
 [![Open your Home Assistant instance and open this fork in the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=borgqueenx&repository=HAWC&category=Dashboard)
 
 > **After updating from the previous HAWC build:** change dashboard card types from `custom:weather-forecast-card` to `custom:hawc-card`. Remove the old Lovelace resource and install HAWC again so Home Assistant loads `HAWC.js`. This distinct custom element name avoids collisions with the original card.

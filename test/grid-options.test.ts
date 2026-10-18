@@ -21,15 +21,15 @@ function createCard(
 }
 
 describe("weather-forecast-card grid options", () => {
-  it("reports a 12-column grid with integer rows so it snaps in Sections view", () => {
+  it("reports columns and leaves row sizing to the content in Sections view", () => {
     const options = createCard().getGridOptions();
 
     expect(options.columns).toBe(12);
-    expect(Number.isInteger(options.rows)).toBe(true);
-    expect(options.rows).not.toBe("auto");
+    expect(options.rows).toBeUndefined();
+    expect(options.min_rows).toBeUndefined();
   });
 
-  it("never reports a minimum larger than the default rows", () => {
+  it("does not force row counts for different card layouts", () => {
     const configs: Partial<WeatherForecastCardConfig>[] = [
       {},
       { show_current: false },
@@ -40,39 +40,40 @@ describe("weather-forecast-card grid options", () => {
 
     for (const config of configs) {
       const options = createCard(config).getGridOptions();
-      expect(options.min_rows).toBeLessThanOrEqual(options.rows as number);
+      expect(options.rows).toBeUndefined();
+      expect(options.min_rows).toBeUndefined();
     }
   });
 
-  it("requires more rows for the taller chart forecast than the simple forecast", () => {
+  it("estimates a larger masonry size for chart mode than simple mode", () => {
     const simple = createCard({
       forecast: { mode: ForecastMode.Simple },
-    }).getGridOptions();
+    }).getCardSize();
     const chart = createCard({
       forecast: { mode: ForecastMode.Chart },
-    }).getGridOptions();
+    }).getCardSize();
 
-    expect((chart.rows as number)).toBeGreaterThan(simple.rows as number);
+    expect(chart).toBeGreaterThan(simple);
   });
 
   it("reserves extra height when current attributes are shown", () => {
     const without = createCard({
       current: { show_attributes: false },
-    }).getGridOptions();
+    }).getCardSize();
     const withAttrs = createCard({
       current: { show_attributes: true },
-    }).getGridOptions();
+    }).getCardSize();
 
-    expect((withAttrs.rows as number)).toBeGreaterThan(without.rows as number);
+    expect(withAttrs).toBeGreaterThan(without);
   });
 
-  it("drops a block's rows when that block is hidden", () => {
-    const both = createCard().getGridOptions();
-    const currentOnly = createCard({ show_forecast: false }).getGridOptions();
-    const forecastOnly = createCard({ show_current: false }).getGridOptions();
+  it("reduces masonry size when either card block is hidden", () => {
+    const both = createCard().getCardSize();
+    const currentOnly = createCard({ show_forecast: false }).getCardSize();
+    const forecastOnly = createCard({ show_current: false }).getCardSize();
 
-    expect((currentOnly.rows as number)).toBeLessThan(both.rows as number);
-    expect((forecastOnly.rows as number)).toBeLessThan(both.rows as number);
+    expect(currentOnly).toBeLessThan(both);
+    expect(forecastOnly).toBeLessThan(both);
   });
 
   it("widens the minimum columns only when both blocks are shown", () => {
@@ -85,9 +86,11 @@ describe("weather-forecast-card grid options", () => {
     ).toBe(4);
   });
 
-  it("exposes a masonry card size consistent with the grid rows", () => {
+  it("exposes a positive integer masonry card size", () => {
     const card = createCard();
+    const size = card.getCardSize();
 
-    expect(card.getCardSize()).toBe(card.getGridOptions().rows);
+    expect(Number.isInteger(size)).toBe(true);
+    expect(size).toBeGreaterThan(0);
   });
 });
