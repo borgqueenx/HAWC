@@ -164,7 +164,7 @@ export interface WeatherForecastCardForecastActionConfig {
 }
 
 export interface WeatherForecastCardConfig {
-  type: "custom:weather-forecast-card";
+  type: "custom:hawc-card";
   entity: string;
   name?: EntityName;
   /** @deprecated Use `current.temperature_entity` instead */

@@ -37,7 +37,7 @@ describe("weather-forecast-card chart", () => {
     const config: WeatherForecastCardConfig = merge(
       {},
       {
-        type: "custom:weather-forecast-card",
+        type: "custom:hawc-card",
         entity: "weather.demo",
         forecast: {
           mode: ForecastMode.Chart,
@@ -548,7 +548,7 @@ describe("weather-forecast-card chart", () => {
       <weather-forecast-card
         .hass=${hass}
         .config=${{
-          type: "custom:weather-forecast-card",
+          type: "custom:hawc-card",
           entity: "weather.demo",
           forecast: { mode: ForecastMode.Chart },
         }}

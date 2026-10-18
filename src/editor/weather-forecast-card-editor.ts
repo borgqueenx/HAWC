@@ -103,7 +103,7 @@ type WeatherForecastCardEditorConfig = {
   advanced_settings?: unknown;
 } & WeatherForecastCardConfig;
 
-@customElement("weather-forecast-card-editor")
+@customElement("hawc-card-editor")
 export class WeatherForecastCardEditor
   extends LitElement
   implements LovelaceCardEditor
@@ -1653,6 +1653,6 @@ const flattenNestedKeys = (obj: Record<string, any>) => {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "weather-forecast-card-editor": WeatherForecastCardEditor;
+    "hawc-card-editor": WeatherForecastCardEditor;
   }
 }

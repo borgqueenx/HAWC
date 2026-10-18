@@ -2,10 +2,10 @@
   <img src="docs/fork-preview.png" alt="HAWC weather forecast card preview" width="480" style="border-radius: 12px;">
   <br>
   <a href=https://www.home-assistant.io/><img alt="Home Assistant" src="https://img.shields.io/badge/Home%20Assistant-Start-blue?logo=homeassistant&logoColor=fff&style=for-the-badge&labelColor=000"></a>
-  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=borgqueenx&repository=ha-weather-forecast-card&category=Dashboard"><img alt="HACS" src="https://img.shields.io/badge/HACS-custom%20fork-blue?logo=homeassistantcommunitystore&logoColor=fff&style=for-the-badge&labelColor=000"></a>
-  <a href="https://github.com/borgqueenx/ha-weather-forecast-card/releases"><img alt="Releases" src="https://img.shields.io/github/v/release/borgqueenx/ha-weather-forecast-card?style=for-the-badge&labelColor=000&logoColor=fff&color=blue"></a>
-  <a href="https://github.com/borgqueenx/ha-weather-forecast-card/actions/workflows/build.yml"><img alt="Tests" src="https://img.shields.io/github/actions/workflow/status/borgqueenx/ha-weather-forecast-card/build.yml?branch=main&style=for-the-badge&logo=github&label=Tests&labelColor=000&logoColor=fff&color=blue"></a>
-  <a href="https://github.com/borgqueenx/ha-weather-forecast-card/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/borgqueenx/ha-weather-forecast-card/total?style=for-the-badge&labelColor=000&logoColor=fff&color=blue"></a>
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=borgqueenx&repository=HAWC&category=Dashboard"><img alt="HACS" src="https://img.shields.io/badge/HACS-custom%20fork-blue?logo=homeassistantcommunitystore&logoColor=fff&style=for-the-badge&labelColor=000"></a>
+  <a href="https://github.com/borgqueenx/HAWC/releases"><img alt="Releases" src="https://img.shields.io/github/v/release/borgqueenx/HAWC?style=for-the-badge&labelColor=000&logoColor=fff&color=blue"></a>
+  <a href="https://github.com/borgqueenx/HAWC/actions/workflows/build.yml"><img alt="Tests" src="https://img.shields.io/github/actions/workflow/status/borgqueenx/HAWC/build.yml?branch=main&style=for-the-badge&logo=github&label=Tests&labelColor=000&logoColor=fff&color=blue"></a>
+  <a href="https://github.com/borgqueenx/HAWC/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/borgqueenx/HAWC/total?style=for-the-badge&labelColor=000&logoColor=fff&color=blue"></a>
   <a href="LICENSE"><img alt="License" src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge&labelColor=000"></a>
 </div>
 
@@ -51,26 +51,28 @@ This card takes inspiration from [Weather Forecast Extended Card](https://github
 
 ### HACS (custom repository)
 
-This fork is not part of the default HACS catalog. Add `borgqueenx/ha-weather-forecast-card` as a custom Dashboard repository in HACS, or use the link below to open this fork in your Home Assistant instance:
+This fork is not part of the default HACS catalog. Add `borgqueenx/HAWC` as a custom Dashboard repository in HACS, or use the link below to open this fork in your Home Assistant instance:
 
-[![Open your Home Assistant instance and open this fork in the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=borgqueenx&repository=ha-weather-forecast-card&category=Dashboard)
+[![Open your Home Assistant instance and open this fork in the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=borgqueenx&repository=HAWC&category=Dashboard)
+
+> **After updating from the previous HAWC build:** change dashboard card types from `custom:weather-forecast-card` to `custom:hawc-card`. Remove the old Lovelace resource and install HAWC again so Home Assistant loads `hawc.js`. This distinct custom element name avoids collisions with the original card.
 
 Or build and install the bundle manually:
 
 1. Clone this fork and run `pnpm install` followed by `pnpm build`.
-2. Copy `dist/weather-forecast-card.js` to your `config/www` folder.
+2. Copy `dist/hawc.js` to your `config/www` folder.
 3. Add the resource to your Lovelace configuration as shown below.
 4. Add the card to your dashboard. Clear the browser cache if Home Assistant still shows an older version.
 
 ### Manual Installation
 
 1. Clone this fork and run `pnpm install` followed by `pnpm build`.
-2. Copy `dist/weather-forecast-card.js` to your `config/www` folder.
+2. Copy `dist/hawc.js` to your `config/www` folder.
 3. Add the resource to your Lovelace configuration:
 
 ```yaml
 resources:
-  - url: /local/weather-forecast-card.js
+  - url: /local/hawc.js
     type: module
 ```
 
@@ -80,7 +82,7 @@ resources:
 
 | Name                     | Type              | Default      | Description                                                                                                                                                                                             |
 | :----------------------- | :---------------- | :----------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `type`                   | `string`          | **Required** | `custom:weather-forecast-card`                                                                                                                                                                          |
+| `type`                   | `string`          | **Required** | `custom:hawc-card`                                                                                                                                                                          |
 | `entity`                 | `string`          | **Required** | The weather entity id (e.g., `weather.home`).                                                                                                                                                           |
 | `name`                   | `string`/`array`  | optional     | Name to display. Defaults to the entity's own name. Can also be a list of name parts to compose it from, see [Name](#name).                                                                             |
 | `show_current`           | `boolean`         | `true`       | Show current weather conditions.                                                                                                                                                                        |
@@ -103,7 +105,7 @@ resources:
 By default the card shows the weather entity's own name. Set `name` to a string to override it:
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 name: Outside
 ```
@@ -111,7 +113,7 @@ name: Outside
 On Home Assistant 2026.4 and later, `name` can also be a list of parts, which the card resolves against the entity's device, area and floor. This is the same naming Home Assistant's built-in cards use, so a renamed device or area is picked up automatically:
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 name:
   - type: area
@@ -339,7 +341,7 @@ The attribute selector can be accessed via:
 **Example configuration with settings icon:**
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 forecast:
   mode: chart
@@ -349,7 +351,7 @@ forecast:
 ## Example
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 current:
   show_attributes:
@@ -379,7 +381,7 @@ Enable weather effects using the `show_condition_effects` option:
 **Enable all effects:**
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 show_condition_effects: true
 ```
@@ -387,7 +389,7 @@ show_condition_effects: true
 **Enable specific effects only:**
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 show_condition_effects:
   - rain
@@ -399,7 +401,7 @@ show_condition_effects:
 **Disable all effects (default):**
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 show_condition_effects: false
 ```
@@ -458,7 +460,7 @@ Icons should be named after the weather condition states used by Home Assistant.
 Example configuration with custom icons:
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 icons_path: /local/img/weather-icons
 ```
@@ -599,7 +601,7 @@ my-custom-theme:
 Configure font size for all elements:
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 card_mod:
   style: |
@@ -617,7 +619,7 @@ card_mod:
 Or if you want more granular control:
 
 ```yaml
-type: custom:weather-forecast-card
+type: custom:hawc-card
 entity: weather.home
 card_mod:
   style: |

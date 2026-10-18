@@ -33,7 +33,7 @@ describe("twice_daily forecast", () => {
 
   describe("simple mode", () => {
     const testConfig: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       default_forecast: "daily",
       forecast: {
@@ -122,7 +122,7 @@ describe("twice_daily forecast", () => {
 
   describe("chart mode", () => {
     const testConfig: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       default_forecast: "daily",
       forecast: {
@@ -190,7 +190,7 @@ describe("twice_daily only forecast", () => {
   mockHassInstance.hourlyForecast = [];
 
   const testConfig: WeatherForecastCardConfig = {
-    type: "custom:weather-forecast-card",
+    type: "custom:hawc-card",
     entity: "weather.demo",
     default_forecast: "daily",
     forecast: {
@@ -260,7 +260,7 @@ describe("forecast type preference", () => {
       WeatherEntityFeature.FORECAST_HOURLY;
 
     const config: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       default_forecast: "daily",
     };

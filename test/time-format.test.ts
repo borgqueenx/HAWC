@@ -20,7 +20,7 @@ import "../src/index";
 
 describe("time format rendering", () => {
   const testConfig: WeatherForecastCardConfig = {
-    type: "custom:weather-forecast-card",
+    type: "custom:hawc-card",
     entity: "weather.demo",
     forecast: {
       mode: ForecastMode.Simple,
@@ -320,7 +320,7 @@ describe("time format rendering", () => {
 
     it("should use single-row layout for hourly in German", async () => {
       const sunTimesConfig: WeatherForecastCardConfig = {
-        type: "custom:weather-forecast-card",
+        type: "custom:hawc-card",
         entity: "weather.demo",
         forecast: {
           mode: ForecastMode.Simple,
@@ -375,7 +375,7 @@ describe("time format rendering", () => {
 
       // Config with show_sun_times enabled
       const sunTimesConfig: WeatherForecastCardConfig = {
-        type: "custom:weather-forecast-card",
+        type: "custom:hawc-card",
         entity: "weather.demo",
         forecast: {
           mode: ForecastMode.Simple,

@@ -39,7 +39,7 @@ describe("daily-only forecast", () => {
 
   describe("simple mode", () => {
     const testConfig: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       default_forecast: "daily",
       forecast: {
@@ -141,7 +141,7 @@ describe("daily-only forecast", () => {
 
     it("should respect daily_slots limit", async () => {
       const config: WeatherForecastCardConfig = {
-        type: "custom:weather-forecast-card",
+        type: "custom:hawc-card",
         entity: "weather.demo",
         default_forecast: "daily",
         forecast: {
@@ -175,7 +175,7 @@ describe("daily-only forecast", () => {
 
     it("should auto-switch to daily if config specifies hourly but only daily is available", async () => {
       const config: WeatherForecastCardConfig = {
-        type: "custom:weather-forecast-card",
+        type: "custom:hawc-card",
         entity: "weather.demo",
         default_forecast: "hourly", // Request hourly
         forecast: {
@@ -202,7 +202,7 @@ describe("daily-only forecast", () => {
 
   describe("chart mode", () => {
     const testConfig: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       default_forecast: "daily",
       forecast: {
@@ -275,7 +275,7 @@ describe("daily-only forecast", () => {
 
     it("should respect daily_slots limit in chart mode", async () => {
       const config: WeatherForecastCardConfig = {
-        type: "custom:weather-forecast-card",
+        type: "custom:hawc-card",
         entity: "weather.demo",
         default_forecast: "daily",
         forecast: {
@@ -308,7 +308,7 @@ describe("no forecast support", () => {
     hass.states["weather.demo"].attributes.supported_features = 0;
 
     const config: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       show_forecast: true,
     };
@@ -338,7 +338,7 @@ describe("no forecast support", () => {
     hass.states["weather.demo"].attributes.supported_features = 0;
 
     const config: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       show_forecast: true,
       show_current: false, // Only forecast (which won't be available)
@@ -371,7 +371,7 @@ describe("no forecast support", () => {
     hass.states["weather.demo"].attributes.supported_features = 1;
 
     const config: WeatherForecastCardConfig = {
-      type: "custom:weather-forecast-card",
+      type: "custom:hawc-card",
       entity: "weather.demo",
       show_forecast: false, // Explicitly disabled
     };

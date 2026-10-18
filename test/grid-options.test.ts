@@ -12,7 +12,7 @@ function createCard(
   ) as WeatherForecastCard;
 
   card.setConfig({
-    type: "custom:weather-forecast-card",
+    type: "custom:hawc-card",
     entity: "weather.demo",
     ...config,
   } as WeatherForecastCardConfig);

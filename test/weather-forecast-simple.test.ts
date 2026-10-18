@@ -21,7 +21,7 @@ describe("weather-forecast-card simple", () => {
   const hass = mockHassInstance.getHass() as ExtendedHomeAssistant;
 
   const testConfig: WeatherForecastCardConfig = {
-    type: "custom:weather-forecast-card",
+    type: "custom:hawc-card",
     entity: "weather.demo",
     forecast: {
       mode: ForecastMode.Simple,

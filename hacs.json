@@ -1,6 +1,6 @@
 {
   "name": "HAWC - Highly Animated Weather Card",
   "render_readme": true,
-  "filename": "weather-forecast-card.js",
+  "filename": "hawc.js",
   "content_in_root": false
 }

@@ -15,7 +15,7 @@
     "custom-card"
   ],
   "type": "module",
-  "module": "dist/weather-forecast-card.js",
+  "module": "dist/hawc.js",
   "targets": {
     "module": {
       "distDir": "./dist",
@@ -23,7 +23,7 @@
         "src/index.ts"
       ],
       "optimize": true,
-      "publicUrl": "/hacsfiles/ha-weather-forecast-card/",
+      "publicUrl": "/hacsfiles/HAWC/",
       "includeNodeModules": true
     }
   },
