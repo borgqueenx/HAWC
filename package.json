@@ -15,7 +15,7 @@
     "custom-card"
   ],
   "type": "module",
-  "module": "dist/hawc.js",
+  "module": "dist/HAWC.js",
   "targets": {
     "module": {
       "distDir": "./dist",

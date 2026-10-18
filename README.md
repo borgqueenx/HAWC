@@ -55,24 +55,24 @@ This fork is not part of the default HACS catalog. Add `borgqueenx/HAWC` as a cu
 
 [![Open your Home Assistant instance and open this fork in the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=borgqueenx&repository=HAWC&category=Dashboard)
 
-> **After updating from the previous HAWC build:** change dashboard card types from `custom:weather-forecast-card` to `custom:hawc-card`. Remove the old Lovelace resource and install HAWC again so Home Assistant loads `hawc.js`. This distinct custom element name avoids collisions with the original card.
+> **After updating from the previous HAWC build:** change dashboard card types from `custom:weather-forecast-card` to `custom:hawc-card`. Remove the old Lovelace resource and install HAWC again so Home Assistant loads `HAWC.js`. This distinct custom element name avoids collisions with the original card.
 
 Or build and install the bundle manually:
 
 1. Clone this fork and run `pnpm install` followed by `pnpm build`.
-2. Copy `dist/hawc.js` to your `config/www` folder.
+2. Copy `dist/HAWC.js` to your `config/www` folder.
 3. Add the resource to your Lovelace configuration as shown below.
 4. Add the card to your dashboard. Clear the browser cache if Home Assistant still shows an older version.
 
 ### Manual Installation
 
 1. Clone this fork and run `pnpm install` followed by `pnpm build`.
-2. Copy `dist/hawc.js` to your `config/www` folder.
+2. Copy `dist/HAWC.js` to your `config/www` folder.
 3. Add the resource to your Lovelace configuration:
 
 ```yaml
 resources:
-  - url: /local/hawc.js
+  - url: /local/HAWC.js
     type: module
 ```
 
