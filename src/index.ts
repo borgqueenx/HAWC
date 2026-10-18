@@ -8,17 +8,17 @@ declare global {
   }
 }
 
-customElements.define("weather-forecast-card", WeatherForecastCard);
+customElements.define("hawc-card", WeatherForecastCard);
 
 window.customCards = window.customCards || [];
 window.customCards.push({
-  type: "weather-forecast-card",
-  name: "Weather Forecast Card",
-  description: "Weather forecast card for Home Assistant",
+  type: "hawc-card",
+  name: "HAWC - Highly Animated Weather Card",
+  description: "Animated weather forecast card for Home Assistant",
 });
 
 console.info(
-  `%cWEATHER-FORECAST-CARD %c${pjson.version}`,
+  `%cHAWC %c${pjson.version}`,
   "color: orange; font-weight: bold; background: black",
   "color: white; font-weight: bold; background: dimgray"
 );

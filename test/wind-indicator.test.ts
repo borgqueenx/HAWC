@@ -109,7 +109,7 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 12, bearing: 270 degrees"
+        "Wind speed: 12 m/s, bearing: 270 degrees"
       );
     });
 
@@ -277,7 +277,7 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10, bearing: 45 degrees"
+        "Wind speed: 10 m/s, bearing: 45 degrees"
       );
     });
 
@@ -291,7 +291,7 @@ describe("wfc-wind-indicator", () => {
       const svg = element.shadowRoot?.querySelector("svg");
       // 45 + 180 = 225
       expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10, bearing: 225 degrees"
+        "Wind speed: 10 m/s, bearing: 225 degrees"
       );
     });
 
@@ -305,7 +305,7 @@ describe("wfc-wind-indicator", () => {
       const svg = element.shadowRoot?.querySelector("svg");
       // (270 + 180) % 360 = 90
       expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10, bearing: 90 degrees"
+        "Wind speed: 10 m/s, bearing: 90 degrees"
       );
     });
   });
@@ -631,7 +631,7 @@ describe("wfc-wind-indicator", () => {
       expect(svg).not.toBeNull();
       const polygon = element.shadowRoot?.querySelector("polygon");
       expect(polygon).toBeNull();
-      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10");
+      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
     });
 
     it("should not render tip for empty string wind bearing", async () => {
@@ -656,7 +656,7 @@ describe("wfc-wind-indicator", () => {
       expect(svg).not.toBeNull();
       const polygon = element.shadowRoot?.querySelector("polygon");
       expect(polygon).toBeNull();
-      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10");
+      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
     });
 
     it("should not render tip for NaN numeric string wind bearing", async () => {
@@ -681,7 +681,7 @@ describe("wfc-wind-indicator", () => {
       expect(svg).not.toBeNull();
       const polygon = element.shadowRoot?.querySelector("polygon");
       expect(polygon).toBeNull();
-      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10");
+      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
     });
   });
 
