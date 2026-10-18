@@ -1,6 +1,6 @@
 {
   "name": "hawc",
-  "version": "1.3.0-devel",
+  "version": "1.3.0",
   "description": "HAWC (Highly Animated Weather Card) for Home Assistant",
   "browserslist": "ios >= 15, safari >= 15, last 2 versions, not dead",
   "author": "troinine",
