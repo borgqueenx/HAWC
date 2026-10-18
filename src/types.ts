@@ -45,6 +45,7 @@ export const WEATHER_EFFECTS = [
   "moon",
   "sun",
   "cloud",
+  "fog",
 ] as const;
 
 export type CurrentWeatherAttributes =

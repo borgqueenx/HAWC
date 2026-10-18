@@ -197,6 +197,8 @@ export class WeatherAnimationProvider extends LitElement {
             return this.renderLightning();
           case "cloud":
             return this.renderClouds();
+          case "fog":
+            return this.renderFog();
           default:
             return nothing;
         }
@@ -410,6 +412,9 @@ export class WeatherAnimationProvider extends LitElement {
     if (state.includes("lightning")) {
       if (isEnabled("lightning")) effects.add("lightning");
     }
+    if (state === "fog") {
+      if (isEnabled("fog")) effects.add("fog");
+    }
 
     const isClearState = state === "sunny" || state === "clear-night";
     const isCloudy = state === "cloudy";
@@ -459,6 +464,14 @@ export class WeatherAnimationProvider extends LitElement {
     const isOvercast = this.weatherEntity?.state === "cloudy";
 
     return html`<div class="${isOvercast ? `${base} overcast` : base}"></div>`;
+  }
+
+  private renderFog() {
+    return html`<div class="fog" aria-hidden="true">
+      <div class="fog-bank fog-bank-back"></div>
+      <div class="fog-bank fog-bank-middle"></div>
+      <div class="fog-bank fog-bank-front"></div>
+    </div>`;
   }
 
   private renderSun() {

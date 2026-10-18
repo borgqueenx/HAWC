@@ -264,11 +264,15 @@ ha-card {
 }
 .wfc-sun-arc-sun-glow {
   stroke: none;
-  opacity: 0.28;
+  fill: url(#wfc-sun-arc-sun-halo);
 }
 .wfc-sun-arc-sun-disc {
   stroke: var(--ha-card-background, #fff);
   stroke-width: 1.2;
+}
+.wfc-sun-arc-sun-rays {
+  fill: none;
+  stroke-width: 2;
 }
 .wfc-sun-times {
   display: flex;

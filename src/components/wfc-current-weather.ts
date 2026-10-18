@@ -337,14 +337,31 @@ export class WfcCurrentWeather extends LitElement {
       >
         <path class="wfc-sun-arc-track" d="M20 28 Q120 -8 220 28" />
         <defs>
+          <radialGradient id="wfc-sun-arc-sun-halo">
+            <stop
+              offset="0%"
+              stop-color="var(--weather-forecast-card-sunrise-color, #ffb300)"
+              stop-opacity="0.24"
+            />
+            <stop
+              offset="45%"
+              stop-color="var(--weather-forecast-card-sunrise-color, #ffb300)"
+              stop-opacity="0.12"
+            />
+            <stop
+              offset="100%"
+              stop-color="var(--weather-forecast-card-sunrise-color, #ffb300)"
+              stop-opacity="0"
+            />
+          </radialGradient>
           <filter
-            id="wfc-sun-arc-gaussian-glow"
+            id="wfc-sun-arc-ray-glow"
             x="-100%"
             y="-100%"
             width="300%"
             height="300%"
           >
-            <feGaussianBlur in="SourceGraphic" stdDeviation="2.4" result="glow" />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3.2" result="glow" />
             <feMerge>
               <feMergeNode in="glow" />
               <feMergeNode in="SourceGraphic" />
@@ -360,12 +377,13 @@ export class WfcCurrentWeather extends LitElement {
         ${daytime
           ? svg`<g
               class="wfc-sun-arc-sun"
-              filter="url(#wfc-sun-arc-gaussian-glow)"
               transform="translate(${x} ${y})"
             >
-              <circle class="wfc-sun-arc-sun-glow" r="12" />
+              <circle class="wfc-sun-arc-sun-glow" r="16" />
               <circle class="wfc-sun-arc-sun-disc" r="5.5" />
               <path
+                class="wfc-sun-arc-sun-rays"
+                filter="url(#wfc-sun-arc-ray-glow)"
                 d="M0-8v-4M0 8v4M-8 0h-4M8 0h4M-5.7-5.7l-2.8-2.8M5.7 5.7l2.8 2.8M5.7-5.7l2.8-2.8M-5.7 5.7l-2.8 2.8"
               />
             </g>`
