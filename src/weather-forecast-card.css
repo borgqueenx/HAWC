@@ -257,8 +257,8 @@ ha-card {
   stroke: #fff;
 }
 .wfc-sun-arc-sun {
-  fill: var(--weather-forecast-card-sunrise-color, #ffb300);
-  stroke: var(--weather-forecast-card-sunrise-color, #ffb300);
+  fill: var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300));
+  stroke: var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300));
   stroke-width: 2;
   stroke-linecap: round;
 }

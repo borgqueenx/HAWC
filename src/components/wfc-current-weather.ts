@@ -311,6 +311,27 @@ export class WfcCurrentWeather extends LitElement {
     progress = Math.max(0, Math.min(1, progress));
     const x = 20 + 200 * progress;
     const y = 28 - 72 * progress * (1 - progress);
+    // The marker rises from the horizon at sunrise and sinks back into it at sunset.
+    // Quantizing this short reveal gives it a deliberate stepped appearance.
+    const horizonReveal = Math.max(
+      0,
+      Math.min(1, Math.min(progress, 1 - progress) / 0.055)
+    );
+    const revealStep = Math.round(horizonReveal * 5) / 5;
+    const markerRise = (1 - revealStep) * 7;
+    const markerScale = 0.82 + 0.3 * Math.sin(Math.PI * progress);
+    const glowIntensity = 0.45 + 0.55 * Math.sin(Math.PI * progress);
+    const horizonColorProgress = Math.max(
+      0,
+      Math.min(1, Math.min(progress, 1 - progress) / 0.055)
+    );
+    const redMix = Math.round((1 - horizonColorProgress) * 100);
+    const markerColor = `color-mix(in srgb, #ef5547 ${redMix}%, var(--weather-forecast-card-sunrise-color, #ffb300))`;
+    const rayOpacity = Math.max(
+      0,
+      Math.min(1, (progress - 0.25) / 0.25, (0.75 - progress) / 0.25)
+    );
+    const rayRotation = progress * 24;
     const moon = getMoonPhaseInfo(this.hass, this._now);
     const moonLit = moonLitPath(moon.fraction, moon.litRight);
     const timeOptions: Intl.DateTimeFormatOptions = {
@@ -337,20 +358,23 @@ export class WfcCurrentWeather extends LitElement {
       >
         <path class="wfc-sun-arc-track" d="M20 28 Q120 -8 220 28" />
         <defs>
-          <radialGradient id="wfc-sun-arc-sun-halo">
+          <radialGradient
+            id="wfc-sun-arc-sun-halo"
+            style="--wfc-sun-arc-marker-color: ${markerColor}"
+          >
             <stop
               offset="0%"
-              stop-color="var(--weather-forecast-card-sunrise-color, #ffb300)"
+              stop-color="var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300))"
               stop-opacity="0.24"
             />
             <stop
               offset="45%"
-              stop-color="var(--weather-forecast-card-sunrise-color, #ffb300)"
+              stop-color="var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300))"
               stop-opacity="0.12"
             />
             <stop
               offset="100%"
-              stop-color="var(--weather-forecast-card-sunrise-color, #ffb300)"
+              stop-color="var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300))"
               stop-opacity="0"
             />
           </radialGradient>
@@ -377,15 +401,24 @@ export class WfcCurrentWeather extends LitElement {
         ${daytime
           ? svg`<g
               class="wfc-sun-arc-sun"
-              transform="translate(${x} ${y})"
+              style="--wfc-sun-arc-marker-color: ${markerColor}"
+              transform="translate(${x} ${y + markerRise})"
             >
-              <circle class="wfc-sun-arc-sun-glow" r="16" />
-              <circle class="wfc-sun-arc-sun-disc" r="5.5" />
-              <path
-                class="wfc-sun-arc-sun-rays"
-                filter="url(#wfc-sun-arc-ray-glow)"
-                d="M0-8v-4M0 8v4M-8 0h-4M8 0h4M-5.7-5.7l-2.8-2.8M5.7 5.7l2.8 2.8M5.7-5.7l2.8-2.8M-5.7 5.7l-2.8 2.8"
-              />
+              <g transform="scale(${markerScale})" opacity="${revealStep}">
+                <circle
+                  class="wfc-sun-arc-sun-glow"
+                  r="16"
+                  opacity="${glowIntensity}"
+                />
+                <circle class="wfc-sun-arc-sun-disc" r="5.5" />
+                <path
+                  class="wfc-sun-arc-sun-rays"
+                  filter="url(#wfc-sun-arc-ray-glow)"
+                  opacity="${rayOpacity}"
+                  transform="rotate(${rayRotation})"
+                  d="M0-8v-4M0 8v4M-8 0h-4M8 0h4M-5.7-5.7l-2.8-2.8M5.7 5.7l2.8 2.8M5.7-5.7l2.8-2.8M-5.7 5.7l-2.8 2.8"
+                />
+              </g>
             </g>`
           : svg`<svg
               class="wfc-moon-arc-marker"
