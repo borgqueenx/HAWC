@@ -310,28 +310,39 @@ export class WfcCurrentWeather extends LitElement {
     }
     progress = Math.max(0, Math.min(1, progress));
     const x = 20 + 200 * progress;
-    const y = 28 - 72 * progress * (1 - progress);
-    // The marker rises from the horizon at sunrise and sinks back into it at sunset.
-    // Quantizing this short reveal gives it a deliberate stepped appearance.
-    const horizonReveal = Math.max(
+    const y = 22 - 48 * progress * (1 - progress);
+    // Reveal the sun in ten clipped steps while it continues along the arc.
+    const sunriseProgress = Math.max(0, Math.min(1, progress / 0.05));
+    const sunsetProgress = Math.max(0, Math.min(1, (1 - progress) / 0.05));
+    const sunriseStep = Math.floor(sunriseProgress * 10) / 10;
+    const sunsetStep = Math.floor(sunsetProgress * 10) / 10;
+    const isAtHorizon = daytime && (progress < 0.05 || progress > 0.95);
+    const markerY = daytime
+      ? y +
+        (progress < 0.05 ? (1 - sunriseStep) * 11.5 : 0) +
+        (progress > 0.95 ? (1 - sunsetStep) * 11.5 : 0)
+      : y;
+    const markerScale = 0.72 + 0.24 * Math.sin(Math.PI * progress);
+    const moonSize = 14.4 * markerScale;
+    const glowSizeScale = 1 - 0.04 * Math.sin(Math.PI * progress);
+    const daylightTravel = Math.max(
       0,
-      Math.min(1, Math.min(progress, 1 - progress) / 0.055)
+      Math.min(1, (progress - 0.05) / 0.9)
     );
-    const revealStep = Math.round(horizonReveal * 5) / 5;
-    const markerRise = (1 - revealStep) * 7;
-    const markerScale = 0.82 + 0.3 * Math.sin(Math.PI * progress);
-    const glowIntensity = 0.45 + 0.55 * Math.sin(Math.PI * progress);
+    const glowIntensity =
+      (0.18 + 0.82 * Math.sin(Math.PI * progress)) *
+      (1 - 0.3 * daylightTravel);
     const horizonColorProgress = Math.max(
       0,
-      Math.min(1, Math.min(progress, 1 - progress) / 0.055)
+      Math.min(1, Math.min(progress, 1 - progress) / 0.05)
     );
     const redMix = Math.round((1 - horizonColorProgress) * 100);
-    const markerColor = `color-mix(in srgb, #ef5547 ${redMix}%, var(--weather-forecast-card-sunrise-color, #ffb300))`;
+    const markerColor = `color-mix(in srgb, #f04b3e ${redMix}%, var(--weather-forecast-card-sunrise-color, #ffb300))`;
     const rayOpacity = Math.max(
       0,
       Math.min(1, (progress - 0.25) / 0.25, (0.75 - progress) / 0.25)
     );
-    const rayRotation = progress * 24;
+    const rayRotation = progress * 32;
     const moon = getMoonPhaseInfo(this.hass, this._now);
     const moonLit = moonLitPath(moon.fraction, moon.litRight);
     const timeOptions: Intl.DateTimeFormatOptions = {
@@ -356,21 +367,32 @@ export class WfcCurrentWeather extends LitElement {
         role="img"
         aria-hidden="true"
       >
-        <path class="wfc-sun-arc-track" d="M20 28 Q120 -8 220 28" />
+        <path class="wfc-sun-arc-track" d="M20 22 Q120 -2 220 22" />
         <defs>
+          <clipPath
+            id="wfc-sun-arc-sky-horizon"
+            clipPathUnits="userSpaceOnUse"
+          >
+            <rect x="0" y="0" width="240" height="28" />
+          </clipPath>
           <radialGradient
             id="wfc-sun-arc-sun-halo"
             style="--wfc-sun-arc-marker-color: ${markerColor}"
           >
             <stop
               offset="0%"
-              stop-color="var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300))"
-              stop-opacity="0.24"
+              stop-color="#fff8d7"
+              stop-opacity="0.72"
             />
             <stop
-              offset="45%"
+              offset="17%"
               stop-color="var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300))"
-              stop-opacity="0.12"
+              stop-opacity="0.55"
+            />
+            <stop
+              offset="55%"
+              stop-color="var(--wfc-sun-arc-marker-color, var(--weather-forecast-card-sunrise-color, #ffb300))"
+              stop-opacity="0.19"
             />
             <stop
               offset="100%"
@@ -378,6 +400,56 @@ export class WfcCurrentWeather extends LitElement {
               stop-opacity="0"
             />
           </radialGradient>
+          <radialGradient
+            id="wfc-sun-arc-sun-surface"
+            cx="34%"
+            cy="30%"
+            style="--wfc-sun-arc-marker-color: ${markerColor}"
+          >
+            <stop offset="0%" stop-color="#fff7d5" />
+            <stop
+              offset="38%"
+              stop-color="var(--wfc-sun-arc-marker-color, #ffb300)"
+            />
+            <stop
+              offset="100%"
+              stop-color="var(--wfc-sun-arc-marker-color, #ffb300)"
+            />
+          </radialGradient>
+          <filter
+            id="wfc-sun-arc-sun-bloom"
+            x="-180%"
+            y="-180%"
+            width="460%"
+            height="460%"
+          >
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="${3.825 * glowSizeScale}"
+              result="wide"
+            />
+            <feMerge>
+              <feMergeNode in="wide" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter
+            id="wfc-sun-arc-sun-inner-bloom"
+            x="-180%"
+            y="-180%"
+            width="460%"
+            height="460%"
+          >
+            <feGaussianBlur
+              in="SourceGraphic"
+              stdDeviation="${1.275 * glowSizeScale}"
+              result="soft"
+            />
+            <feMerge>
+              <feMergeNode in="soft" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
           <filter
             id="wfc-sun-arc-ray-glow"
             x="-100%"
@@ -396,21 +468,28 @@ export class WfcCurrentWeather extends LitElement {
           class="wfc-sun-arc-progress ${daytime ? "" : "wfc-sun-arc-progress-night"}"
           pathLength="100"
           stroke-dasharray="${progress * 100} 100"
-          d="M20 28 Q120 -8 220 28"
+          d="M20 22 Q120 -2 220 22"
         />
         ${daytime
-          ? svg`<g
-              class="wfc-sun-arc-sun"
-              style="--wfc-sun-arc-marker-color: ${markerColor}"
-              transform="translate(${x} ${y + markerRise})"
-            >
-              <g transform="scale(${markerScale})" opacity="${revealStep}">
+          ? svg`<g clip-path=${isAtHorizon ? "url(#wfc-sun-arc-sky-horizon)" : nothing}>
+              <g
+                class="wfc-sun-arc-sun"
+                style="--wfc-sun-arc-marker-color: ${markerColor}"
+                transform="translate(${x} ${markerY})"
+              >
+              <g transform="scale(${markerScale})">
                 <circle
                   class="wfc-sun-arc-sun-glow"
-                  r="16"
+                  r="${20.4 * glowSizeScale}"
+                  filter="url(#wfc-sun-arc-sun-bloom)"
                   opacity="${glowIntensity}"
                 />
-                <circle class="wfc-sun-arc-sun-disc" r="5.5" />
+                <circle
+                  class="wfc-sun-arc-sun-glow"
+                  r="${8.5 * glowSizeScale}"
+                  filter="url(#wfc-sun-arc-sun-inner-bloom)"
+                  opacity="${Math.min(1, glowIntensity * 1.25)}"
+                />
                 <path
                   class="wfc-sun-arc-sun-rays"
                   filter="url(#wfc-sun-arc-ray-glow)"
@@ -418,14 +497,20 @@ export class WfcCurrentWeather extends LitElement {
                   transform="rotate(${rayRotation})"
                   d="M0-8v-4M0 8v4M-8 0h-4M8 0h4M-5.7-5.7l-2.8-2.8M5.7 5.7l2.8 2.8M5.7-5.7l2.8-2.8M-5.7 5.7l-2.8 2.8"
                 />
+                <circle
+                  class="wfc-sun-arc-sun-disc"
+                  r="5.5"
+                  fill="url(#wfc-sun-arc-sun-surface)"
+                />
+              </g>
               </g>
             </g>`
           : svg`<svg
               class="wfc-moon-arc-marker"
-              x="${x - 7.2}"
-              y="${y - 7.2}"
-              width="14.4"
-              height="14.4"
+              x="${x - moonSize / 2}"
+              y="${y - moonSize / 2}"
+              width="${moonSize}"
+              height="${moonSize}"
               viewBox="0 0 100 100"
             >
               <defs>
