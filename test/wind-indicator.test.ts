@@ -88,7 +88,8 @@ describe("wfc-wind-indicator", () => {
       });
 
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
-      expect(text?.textContent).toBe("16"); // rounded
+      expect(text?.firstChild?.textContent).toBe("16"); // rounded
+      expect(text?.querySelector(".wfc-wind-speed-unit")?.textContent).toBe("km/h");
       expect(text?.getAttribute("x")).toBe("24");
     });
 
@@ -110,7 +111,7 @@ describe("wfc-wind-indicator", () => {
 
       const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
       expect(indicator?.getAttribute("aria-label")).toBe(
-        "Wind speed: 12 m/s, bearing from 270 degrees"
+        "Wind speed: 43 km/h, bearing from 270 degrees"
       );
     });
 
@@ -278,7 +279,7 @@ describe("wfc-wind-indicator", () => {
 
       const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
       expect(indicator?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10 m/s, bearing from 45 degrees"
+        "Wind speed: 36 km/h, bearing from 45 degrees"
       );
     });
 
@@ -292,7 +293,7 @@ describe("wfc-wind-indicator", () => {
       const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
       // 45 + 180 = 225
       expect(indicator?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10 m/s, blowing toward 225 degrees"
+        "Wind speed: 36 km/h, blowing toward 225 degrees"
       );
     });
 
@@ -306,28 +307,28 @@ describe("wfc-wind-indicator", () => {
       const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
       // (270 + 180) % 360 = 90
       expect(indicator?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10 m/s, blowing toward 90 degrees"
+        "Wind speed: 36 km/h, blowing toward 90 degrees"
       );
     });
   });
 
   describe("wind speed colors", () => {
-    it("should keep calm wind flags white", async () => {
-      const element = await createFixture({ windSpeed: 0, windBearing: 0 });
+    it("should keep the flag white below 25 km/h", async () => {
+      const element = await createFixture({ windSpeed: 24 / 3.6, windBearing: 0 });
       const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
       expect(cloth?.style.fill).toBe("rgb(255, 255, 255)");
     });
 
-    it("should tint the flag warm yellow at moderate speeds", async () => {
-      const element = await createFixture({ windSpeed: 18 / 3.6, windBearing: 0 });
+    it("should start orange at 25 km/h", async () => {
+      const element = await createFixture({ windSpeed: 25 / 3.6, windBearing: 0 });
       const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(255, 242, 193)");
+      expect(cloth?.style.fill).toBe("rgb(255, 165, 0)");
     });
 
-    it("should tint the flag red at high speeds", async () => {
-      const element = await createFixture({ windSpeed: 36 / 3.6, windBearing: 0 });
+    it("should fade toward red as speed rises to 40 km/h", async () => {
+      const element = await createFixture({ windSpeed: 40 / 3.6, windBearing: 0 });
       const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(255, 222, 210)");
+      expect(cloth?.style.fill).toBe("rgb(235, 45, 35)");
     });
   });
 
@@ -608,7 +609,7 @@ describe("wfc-wind-indicator", () => {
       const polygon = element.shadowRoot?.querySelector(".wfc-wind-flag-cloth");
       expect(polygon).not.toBeNull();
       const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
-      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
+      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 36 km/h");
     });
 
     it("should render a static flag for empty string wind bearing", async () => {
@@ -634,7 +635,7 @@ describe("wfc-wind-indicator", () => {
       const polygon = element.shadowRoot?.querySelector(".wfc-wind-flag-cloth");
       expect(polygon).not.toBeNull();
       const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
-      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
+      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 36 km/h");
     });
 
     it("should render a static flag for NaN numeric string wind bearing", async () => {
@@ -660,7 +661,7 @@ describe("wfc-wind-indicator", () => {
       const polygon = element.shadowRoot?.querySelector(".wfc-wind-flag-cloth");
       expect(polygon).not.toBeNull();
       const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
-      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
+      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 36 km/h");
     });
   });
 
