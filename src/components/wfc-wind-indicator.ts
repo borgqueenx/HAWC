@@ -76,7 +76,11 @@ export class WfcWindIndicator extends LitElement {
       opacity: 0.8;
     }
     .wfc-wind-flag-cloth {
-      fill: currentColor;
+      fill: #f4f6f7;
+    }
+    .wfc-wind-flag-accent {
+      fill: #d94b50;
+      pointer-events: none;
     }
     .wfc-wind-flag-fold {
       fill: none;
@@ -151,6 +155,10 @@ export class WfcWindIndicator extends LitElement {
     const foldFrames = wavePhases.map(([a, b, c, d, e]) =>
       `M9 8 C16 ${8 + a * wave * 0.55} 20 ${8 + b * wave * 0.55} 25 ${12 + c * wave * 0.55} C31 ${16 + d * wave * 0.55} 37 ${16 + e * wave * 0.55} 43 13`
     );
+    const accentFrames = wavePhases.map(([a, b, c, d, e]) =>
+      `M8 4 C14 ${4 + a * wave} 18 ${4 + b * wave} 24 ${5 + c * wave} C31 ${6 + d * wave} 37 ${6 + e * wave} 44 5 L44 7 C37 ${8 + e * wave} 31 ${8 + d * wave} 25 ${7 + c * wave} C19 ${6 + b * wave} 14 ${6 + a * wave} 8 7 Z`
+    );
+    const accentOpacity = Math.max(0, Math.min(0.38, ((windSpeedKmh - 22) / 18) * 0.38));
     const speedLabel = `${speed} ${shownUnit}`;
 
     return html`
@@ -182,6 +190,23 @@ export class WfcWindIndicator extends LitElement {
                     attributeName="d"
                     dur="${animationDuration}s"
                     values="${flagFrames.join(";")}"
+                    keyTimes="0;0.25;0.5;0.75;1"
+                    calcMode="spline"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
+                    repeatCount="indefinite"
+                  />`
+                : nothing}
+            </path>
+            <path
+              class="wfc-wind-flag-accent"
+              d="${accentFrames[0]}"
+              style="opacity: ${accentOpacity}"
+            >
+              ${shouldAnimate && accentOpacity > 0
+                ? svg`<animate
+                    attributeName="d"
+                    dur="${animationDuration}s"
+                    values="${accentFrames.join(";")}"
                     keyTimes="0;0.25;0.5;0.75;1"
                     calcMode="spline"
                     keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"

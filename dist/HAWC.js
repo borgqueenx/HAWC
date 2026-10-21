@@ -223,7 +223,11 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
       opacity: 0.8;
     }
     .wfc-wind-flag-cloth {
-      fill: currentColor;
+      fill: #f4f6f7;
+    }
+    .wfc-wind-flag-accent {
+      fill: #d94b50;
+      pointer-events: none;
     }
     .wfc-wind-flag-fold {
       fill: none;
@@ -242,11 +246,11 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
       stroke-width: 3.5px;
       stroke-linejoin: round;
     }
-  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=2.2-1.8*f,m=1+6*f,y="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,b=!u&&!y,_=[[-1,0,1,1,0],[0,-1,0,1,1],[1,0,-1,0,1],[1,1,0,-1,0],[-1,0,1,1,0]],v=_.map(([t,e,i,r,a])=>`M8 4 C14 ${4+t*m} 18 ${4+e*m} 24 ${5+i*m} C31 ${6+r*m} 37 ${5+a*m} 44 5 L44 18 C37 ${19+a*m} 31 ${17+r*m} 25 ${17+i*m} C19 ${17+e*m} 14 ${18+t*m} 8 20 Z`),w=_.map(([t,e,i,r,a])=>`M9 8 C16 ${8+t*m*.55} 20 ${8+e*m*.55} 25 ${12+i*m*.55} C31 ${16+r*m*.55} 37 ${16+a*m*.55} 43 13`),x=`${l} ${s}`;return eX`
+  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=2.2-1.8*f,m=1+6*f,y="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,b=!u&&!y,_=[[-1,0,1,1,0],[0,-1,0,1,1],[1,0,-1,0,1],[1,1,0,-1,0],[-1,0,1,1,0]],v=_.map(([t,e,i,r,a])=>`M8 4 C14 ${4+t*m} 18 ${4+e*m} 24 ${5+i*m} C31 ${6+r*m} 37 ${5+a*m} 44 5 L44 18 C37 ${19+a*m} 31 ${17+r*m} 25 ${17+i*m} C19 ${17+e*m} 14 ${18+t*m} 8 20 Z`),w=_.map(([t,e,i,r,a])=>`M9 8 C16 ${8+t*m*.55} 20 ${8+e*m*.55} 25 ${12+i*m*.55} C31 ${16+r*m*.55} 37 ${16+a*m*.55} 43 13`),x=_.map(([t,e,i,r,a])=>`M8 4 C14 ${4+t*m} 18 ${4+e*m} 24 ${5+i*m} C31 ${6+r*m} 37 ${6+a*m} 44 5 L44 7 C37 ${8+a*m} 31 ${8+r*m} 25 ${7+i*m} C19 ${6+e*m} 14 ${6+t*m} 8 7 Z`),k=Math.max(0,Math.min(.38,(n-22)/18*.38)),M=`${l} ${s}`;return eX`
       <div
         class="wfc-wind-indicator"
         role="img"
-        aria-label="${d?"direction"===this.type?`Wind speed: ${x}, blowing toward ${h} degrees`:`Wind speed: ${x}, bearing from ${h} degrees`:`Wind speed: ${x}`}"
+        aria-label="${d?"direction"===this.type?`Wind speed: ${M}, blowing toward ${h} degrees`:`Wind speed: ${M}, bearing from ${h} degrees`:`Wind speed: ${M}`}"
         style="color: ${c}"
       >
         <svg
@@ -266,6 +270,21 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
                     attributeName="d"
                     dur="${g}s"
                     values="${v.join(";")}"
+                    keyTimes="0;0.25;0.5;0.75;1"
+                    calcMode="spline"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
+                    repeatCount="indefinite"
+                  />`:eG}
+            </path>
+            <path
+              class="wfc-wind-flag-accent"
+              d="${x[0]}"
+              style="opacity: ${k}"
+            >
+              ${b&&k>0?eq`<animate
+                    attributeName="d"
+                    dur="${g}s"
+                    values="${x.join(";")}"
                     keyTimes="0;0.25;0.5;0.75;1"
                     calcMode="spline"
                     keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
