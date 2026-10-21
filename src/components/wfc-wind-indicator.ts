@@ -80,6 +80,13 @@ export class WfcWindIndicator extends LitElement {
       transform-box: fill-box;
       transform-origin: left center;
     }
+    .wfc-wind-flag-fold {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 0.7;
+      opacity: 0.28;
+      pointer-events: none;
+    }
     .wfc-wind-flag-cloth.is-moving {
       animation: wfc-wind-flag-wave var(--wfc-wind-flag-duration) ease-in-out
         infinite alternate;
@@ -94,13 +101,13 @@ export class WfcWindIndicator extends LitElement {
     }
     @keyframes wfc-wind-flag-wave {
       0% {
-        transform: rotate(var(--wfc-wind-flag-counter-sway)) scaleX(0.92);
+        transform: rotate(var(--wfc-wind-flag-counter-sway)) skewY(-1deg);
       }
       50% {
-        transform: rotate(0deg) scaleX(1);
+        transform: rotate(0deg) skewY(0deg);
       }
       100% {
-        transform: rotate(var(--wfc-wind-flag-sway)) scaleX(0.88);
+        transform: rotate(var(--wfc-wind-flag-sway)) skewY(1deg);
       }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -140,8 +147,8 @@ export class WfcWindIndicator extends LitElement {
     const speedRatio = Math.max(0, Math.min(1, (windSpeedKmh - 2) / 38));
     const flagRotation =
       isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
-    const animationDuration = 3.4 - 3 * speedRatio;
-    const flagSway = 1 + 13 * speedRatio;
+    const animationDuration = 2.1 - 1.55 * speedRatio;
+    const flagSway = 0.5 + 4.5 * speedRatio;
     const speedLabel = `${speed} ${shownUnit}`;
 
     return html`
@@ -159,14 +166,18 @@ export class WfcWindIndicator extends LitElement {
           class="wfc-wind-flag"
           width="${this.size}"
           height="24"
-          viewBox="0 0 32 24"
+          viewBox="0 0 48 32"
           aria-hidden="true"
         >
-          <path class="wfc-wind-flag-mast" d="M8 3v18" />
+          <path class="wfc-wind-flag-mast" d="M8 3v26" />
           <g transform="rotate(${flagRotation} 8 9)">
             <path
               class="wfc-wind-flag-cloth ${isCalm ? "" : "is-moving"}"
-              d="M8 4 C14 4 18 6 25 3 C23 7 24 9 28 11 C23 13 23 16 26 19 C19 16 13 14 8 14 Z"
+              d="M8 4 C16 4 22 6 28 5 C34 4 39 5 44 6 L44 18 C37 17 32 16 27 18 C20 20 14 17 8 20 Z"
+            />
+            <path
+              class="wfc-wind-flag-fold"
+              d="M9 11 C17 10 22 13 29 12 C35 11 39 12 43 12"
             />
           </g>
         </svg>

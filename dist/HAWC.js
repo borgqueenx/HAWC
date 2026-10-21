@@ -227,6 +227,13 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
       transform-box: fill-box;
       transform-origin: left center;
     }
+    .wfc-wind-flag-fold {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 0.7;
+      opacity: 0.28;
+      pointer-events: none;
+    }
     .wfc-wind-flag-cloth.is-moving {
       animation: wfc-wind-flag-wave var(--wfc-wind-flag-duration) ease-in-out
         infinite alternate;
@@ -241,13 +248,13 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
     }
     @keyframes wfc-wind-flag-wave {
       0% {
-        transform: rotate(var(--wfc-wind-flag-counter-sway)) scaleX(0.92);
+        transform: rotate(var(--wfc-wind-flag-counter-sway)) skewY(-1deg);
       }
       50% {
-        transform: rotate(0deg) scaleX(1);
+        transform: rotate(0deg) skewY(0deg);
       }
       100% {
-        transform: rotate(var(--wfc-wind-flag-sway)) scaleX(0.88);
+        transform: rotate(var(--wfc-wind-flag-sway)) skewY(1deg);
       }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -255,25 +262,29 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
         animation: none;
       }
     }
-  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=1+13*f,m=`${l} ${s}`;return eX`
+  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=.5+4.5*f,m=`${l} ${s}`;return eX`
       <div
         class="wfc-wind-indicator"
         role="img"
         aria-label="${d?"direction"===this.type?`Wind speed: ${m}, blowing toward ${h} degrees`:`Wind speed: ${m}, bearing from ${h} degrees`:`Wind speed: ${m}`}"
-        style="color: ${c}; --wfc-wind-flag-duration: ${3.4-3*f}s; --wfc-wind-flag-sway: ${g}deg; --wfc-wind-flag-counter-sway: -${g}deg"
+        style="color: ${c}; --wfc-wind-flag-duration: ${2.1-1.55*f}s; --wfc-wind-flag-sway: ${g}deg; --wfc-wind-flag-counter-sway: -${g}deg"
       >
         <svg
           class="wfc-wind-flag"
           width="${this.size}"
           height="24"
-          viewBox="0 0 32 24"
+          viewBox="0 0 48 32"
           aria-hidden="true"
         >
-          <path class="wfc-wind-flag-mast" d="M8 3v18" />
+          <path class="wfc-wind-flag-mast" d="M8 3v26" />
           <g transform="rotate(${p} 8 9)">
             <path
               class="wfc-wind-flag-cloth ${u?"":"is-moving"}"
-              d="M8 4 C14 4 18 6 25 3 C23 7 24 9 28 11 C23 13 23 16 26 19 C19 16 13 14 8 14 Z"
+              d="M8 4 C16 4 22 6 28 5 C34 4 39 5 44 6 L44 18 C37 17 32 16 27 18 C20 20 14 17 8 20 Z"
+            />
+            <path
+              class="wfc-wind-flag-fold"
+              d="M9 11 C17 10 22 13 29 12 C35 11 39 12 43 12"
             />
           </g>
         </svg>
