@@ -312,23 +312,36 @@ describe("wfc-wind-indicator", () => {
     });
   });
 
-  describe("wind speed colors", () => {
-    it("should keep the flag white below 25 km/h", async () => {
-      const element = await createFixture({ windSpeed: 24 / 3.6, windBearing: 0 });
-      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(255, 255, 255)");
+  describe("wind flag colors", () => {
+    it("should use the same red and white stripes at every wind speed", async () => {
+      const expectedColors = [
+        "#ff9e91",
+        "#ffffff",
+        "#ff9e91",
+        "#ffffff",
+        "#ff9e91",
+      ];
+
+      for (const windSpeed of [1 / 3.6, 25 / 3.6, 40 / 3.6]) {
+        const element = await createFixture({ windSpeed, windBearing: 0 });
+        const stripes = element.shadowRoot?.querySelectorAll(
+          "#wfc-wind-stripes rect"
+        );
+
+        expect(Array.from(stripes ?? [], (stripe) => stripe.getAttribute("fill")))
+          .toEqual(expectedColors);
+      }
     });
 
-    it("should start orange at 25 km/h", async () => {
-      const element = await createFixture({ windSpeed: 25 / 3.6, windBearing: 0 });
-      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(255, 206, 153)");
-    });
+    it("should keep the mast the same neutral color at every wind speed", async () => {
+      for (const windSpeed of [1 / 3.6, 25 / 3.6, 40 / 3.6]) {
+        const element = await createFixture({ windSpeed, windBearing: 0 });
+        const mast = element.shadowRoot?.querySelector<SVGPathElement>(
+          ".wfc-wind-flag-mast"
+        );
 
-    it("should fade toward red as speed rises to 40 km/h", async () => {
-      const element = await createFixture({ windSpeed: 40 / 3.6, windBearing: 0 });
-      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(255, 158, 145)");
+        expect(mast?.getAttribute("stroke")).toBe("#c6cbd1");
+      }
     });
   });
 
