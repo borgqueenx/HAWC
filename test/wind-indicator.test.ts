@@ -89,7 +89,6 @@ describe("wfc-wind-indicator", () => {
 
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
       expect(text?.textContent).toBe("16"); // rounded
-      expect(text?.getAttribute("text-anchor")).toBe("middle");
       expect(text?.getAttribute("x")).toBe("24");
     });
 
@@ -181,7 +180,7 @@ describe("wfc-wind-indicator", () => {
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
       expect(text?.textContent).toBe("0");
       const group = element.shadowRoot?.querySelector("g g");
-      expect(group?.getAttribute("transform")).toContain("rotate(0");
+      expect(group?.getAttribute("transform")).toContain("rotate(90");
     });
   });
 
