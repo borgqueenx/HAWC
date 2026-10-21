@@ -224,8 +224,6 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
     }
     .wfc-wind-flag-cloth {
       fill: currentColor;
-      transform-box: fill-box;
-      transform-origin: left center;
     }
     .wfc-wind-flag-fold {
       fill: none;
@@ -233,10 +231,6 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
       stroke-width: 0.7;
       opacity: 0.28;
       pointer-events: none;
-    }
-    .wfc-wind-flag-cloth.is-moving {
-      animation: wfc-wind-flag-wave var(--wfc-wind-flag-duration) ease-in-out
-        infinite alternate;
     }
     .wfc-wind-speed {
       color: var(--primary-text-color);
@@ -246,28 +240,12 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
       text-align: center;
       white-space: nowrap;
     }
-    @keyframes wfc-wind-flag-wave {
-      0% {
-        transform: rotate(var(--wfc-wind-flag-counter-sway)) skewY(-1deg);
-      }
-      50% {
-        transform: rotate(0deg) skewY(0deg);
-      }
-      100% {
-        transform: rotate(var(--wfc-wind-flag-sway)) skewY(1deg);
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .wfc-wind-flag-cloth.is-moving {
-        animation: none;
-      }
-    }
-  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=.5+4.5*f,m=`${l} ${s}`;return eX`
+  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=2.2-1.8*f,m=1+3.5*f,y="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,b=!u&&!y,_=`M8 4 C14 ${4-m} 18 ${5+m} 24 ${5+m} C31 ${6+m} 37 ${5-m} 44 5 L44 18 C37 ${19-m} 31 ${17+m} 25 ${17+m} C19 ${17+m} 14 ${18-m} 8 20 Z`,v=`M8 4 C14 ${4+m} 18 ${5-m} 24 ${5-m} C31 ${6-m} 37 ${5+m} 44 5 L44 18 C37 ${19+m} 31 ${17-m} 25 ${17-m} C19 ${17-m} 14 ${18+m} 8 20 Z`,w="M9 8 C16 6 20 8 25 12 C31 16 37 16 43 13",x=`${l} ${s}`;return eX`
       <div
         class="wfc-wind-indicator"
         role="img"
-        aria-label="${d?"direction"===this.type?`Wind speed: ${m}, blowing toward ${h} degrees`:`Wind speed: ${m}, bearing from ${h} degrees`:`Wind speed: ${m}`}"
-        style="color: ${c}; --wfc-wind-flag-duration: ${2.1-1.55*f}s; --wfc-wind-flag-sway: ${g}deg; --wfc-wind-flag-counter-sway: -${g}deg"
+        aria-label="${d?"direction"===this.type?`Wind speed: ${x}, blowing toward ${h} degrees`:`Wind speed: ${x}, bearing from ${h} degrees`:`Wind speed: ${x}`}"
+        style="color: ${c}"
       >
         <svg
           class="wfc-wind-flag"
@@ -279,13 +257,33 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
           <path class="wfc-wind-flag-mast" d="M8 3v26" />
           <g transform="rotate(${p} 8 9)">
             <path
-              class="wfc-wind-flag-cloth ${u?"":"is-moving"}"
+              class="wfc-wind-flag-cloth"
               d="M8 4 C15 1 20 4 25 8 C31 13 36 12 44 9 L44 15 C37 20 32 21 25 16 C18 11 14 12 8 20 Z"
-            />
+            >
+              ${b?eq`<animate
+                    attributeName="d"
+                    dur="${g}s"
+                    values="${_};${v};${_}"
+                    keyTimes="0;0.5;1"
+                    calcMode="spline"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    repeatCount="indefinite"
+                  />`:eG}
+            </path>
             <path
               class="wfc-wind-flag-fold"
               d="M9 8 C16 5 20 8 25 12 C31 17 37 17 43 13"
-            />
+            >
+              ${b?eq`<animate
+                    attributeName="d"
+                    dur="${g}s"
+                    values="${w};${"M9 8 C16 11 20 7 25 10 C31 14 37 18 43 13"};${w}"
+                    keyTimes="0;0.5;1"
+                    calcMode="spline"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    repeatCount="indefinite"
+                  />`:eG}
+            </path>
           </g>
         </svg>
         <span class="wfc-wind-speed">${l}</span>

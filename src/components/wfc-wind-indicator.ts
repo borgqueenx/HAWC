@@ -1,4 +1,4 @@
-import { LitElement, html, css, TemplateResult, nothing } from "lit";
+import { LitElement, html, css, TemplateResult, nothing, svg } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ExtendedHomeAssistant } from "../types";
 import {
@@ -77,8 +77,6 @@ export class WfcWindIndicator extends LitElement {
     }
     .wfc-wind-flag-cloth {
       fill: currentColor;
-      transform-box: fill-box;
-      transform-origin: left center;
     }
     .wfc-wind-flag-fold {
       fill: none;
@@ -87,10 +85,6 @@ export class WfcWindIndicator extends LitElement {
       opacity: 0.28;
       pointer-events: none;
     }
-    .wfc-wind-flag-cloth.is-moving {
-      animation: wfc-wind-flag-wave var(--wfc-wind-flag-duration) ease-in-out
-        infinite alternate;
-    }
     .wfc-wind-speed {
       color: var(--primary-text-color);
       font-size: var(--ha-font-size-xs, 12px);
@@ -98,22 +92,6 @@ export class WfcWindIndicator extends LitElement {
       line-height: 14px;
       text-align: center;
       white-space: nowrap;
-    }
-    @keyframes wfc-wind-flag-wave {
-      0% {
-        transform: rotate(var(--wfc-wind-flag-counter-sway)) skewY(-1deg);
-      }
-      50% {
-        transform: rotate(0deg) skewY(0deg);
-      }
-      100% {
-        transform: rotate(var(--wfc-wind-flag-sway)) skewY(1deg);
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .wfc-wind-flag-cloth.is-moving {
-        animation: none;
-      }
     }
   `;
 
@@ -147,8 +125,16 @@ export class WfcWindIndicator extends LitElement {
     const speedRatio = Math.max(0, Math.min(1, (windSpeedKmh - 2) / 38));
     const flagRotation =
       isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
-    const animationDuration = 2.1 - 1.55 * speedRatio;
-    const flagSway = 0.5 + 4.5 * speedRatio;
+    const animationDuration = 2.2 - 1.8 * speedRatio;
+    const wave = 1 + 3.5 * speedRatio;
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const shouldAnimate = !isCalm && !reduceMotion;
+    const flagFrameOne = `M8 4 C14 ${4 - wave} 18 ${5 + wave} 24 ${5 + wave} C31 ${6 + wave} 37 ${5 - wave} 44 5 L44 18 C37 ${19 - wave} 31 ${17 + wave} 25 ${17 + wave} C19 ${17 + wave} 14 ${18 - wave} 8 20 Z`;
+    const flagFrameTwo = `M8 4 C14 ${4 + wave} 18 ${5 - wave} 24 ${5 - wave} C31 ${6 - wave} 37 ${5 + wave} 44 5 L44 18 C37 ${19 + wave} 31 ${17 - wave} 25 ${17 - wave} C19 ${17 - wave} 14 ${18 + wave} 8 20 Z`;
+    const foldFrameOne = "M9 8 C16 6 20 8 25 12 C31 16 37 16 43 13";
+    const foldFrameTwo = "M9 8 C16 11 20 7 25 10 C31 14 37 18 43 13";
     const speedLabel = `${speed} ${shownUnit}`;
 
     return html`
@@ -160,7 +146,7 @@ export class WfcWindIndicator extends LitElement {
             ? `Wind speed: ${speedLabel}, blowing toward ${bearing} degrees`
             : `Wind speed: ${speedLabel}, bearing from ${bearing} degrees`
           : `Wind speed: ${speedLabel}`}"
-        style="color: ${lineColor}; --wfc-wind-flag-duration: ${animationDuration}s; --wfc-wind-flag-sway: ${flagSway}deg; --wfc-wind-flag-counter-sway: -${flagSway}deg"
+        style="color: ${lineColor}"
       >
         <svg
           class="wfc-wind-flag"
@@ -172,13 +158,37 @@ export class WfcWindIndicator extends LitElement {
           <path class="wfc-wind-flag-mast" d="M8 3v26" />
           <g transform="rotate(${flagRotation} 8 9)">
             <path
-              class="wfc-wind-flag-cloth ${isCalm ? "" : "is-moving"}"
+              class="wfc-wind-flag-cloth"
               d="M8 4 C15 1 20 4 25 8 C31 13 36 12 44 9 L44 15 C37 20 32 21 25 16 C18 11 14 12 8 20 Z"
-            />
+            >
+              ${shouldAnimate
+                ? svg`<animate
+                    attributeName="d"
+                    dur="${animationDuration}s"
+                    values="${flagFrameOne};${flagFrameTwo};${flagFrameOne}"
+                    keyTimes="0;0.5;1"
+                    calcMode="spline"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    repeatCount="indefinite"
+                  />`
+                : nothing}
+            </path>
             <path
               class="wfc-wind-flag-fold"
               d="M9 8 C16 5 20 8 25 12 C31 17 37 17 43 13"
-            />
+            >
+              ${shouldAnimate
+                ? svg`<animate
+                    attributeName="d"
+                    dur="${animationDuration}s"
+                    values="${foldFrameOne};${foldFrameTwo};${foldFrameOne}"
+                    keyTimes="0;0.5;1"
+                    calcMode="spline"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    repeatCount="indefinite"
+                  />`
+                : nothing}
+            </path>
           </g>
         </svg>
         <span class="wfc-wind-speed">${speed}</span>
