@@ -240,7 +240,7 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
       text-align: center;
       white-space: nowrap;
     }
-  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=2.2-1.8*f,m=1+3.5*f,y="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,b=!u&&!y,_=`M8 4 C14 ${4-m} 18 ${5+m} 24 ${5+m} C31 ${6+m} 37 ${5-m} 44 5 L44 18 C37 ${19-m} 31 ${17+m} 25 ${17+m} C19 ${17+m} 14 ${18-m} 8 20 Z`,v=`M8 4 C14 ${4+m} 18 ${5-m} 24 ${5-m} C31 ${6-m} 37 ${5+m} 44 5 L44 18 C37 ${19+m} 31 ${17-m} 25 ${17-m} C19 ${17-m} 14 ${18+m} 8 20 Z`,w="M9 8 C16 6 20 8 25 12 C31 16 37 16 43 13",x=`${l} ${s}`;return eX`
+  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=2.2-1.8*f,m=1+6*f,y="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,b=!u&&!y,_=[[-1,0,1,1,0],[0,-1,0,1,1],[1,0,-1,0,1],[1,1,0,-1,0],[-1,0,1,1,0]],v=_.map(([t,e,i,r,a])=>`M8 4 C14 ${4+t*m} 18 ${4+e*m} 24 ${5+i*m} C31 ${6+r*m} 37 ${5+a*m} 44 5 L44 18 C37 ${19+a*m} 31 ${17+r*m} 25 ${17+i*m} C19 ${17+e*m} 14 ${18+t*m} 8 20 Z`),w=_.map(([t,e,i,r,a])=>`M9 8 C16 ${8+t*m*.55} 20 ${8+e*m*.55} 25 ${12+i*m*.55} C31 ${16+r*m*.55} 37 ${16+a*m*.55} 43 13`),x=`${l} ${s}`;return eX`
       <div
         class="wfc-wind-indicator"
         role="img"
@@ -263,10 +263,10 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
               ${b?eq`<animate
                     attributeName="d"
                     dur="${g}s"
-                    values="${_};${v};${_}"
-                    keyTimes="0;0.5;1"
+                    values="${v.join(";")}"
+                    keyTimes="0;0.25;0.5;0.75;1"
                     calcMode="spline"
-                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
                     repeatCount="indefinite"
                   />`:eG}
             </path>
@@ -277,10 +277,10 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
               ${b?eq`<animate
                     attributeName="d"
                     dur="${g}s"
-                    values="${w};${"M9 8 C16 11 20 7 25 10 C31 14 37 18 43 13"};${w}"
-                    keyTimes="0;0.5;1"
+                    values="${w.join(";")}"
+                    keyTimes="0;0.25;0.5;0.75;1"
                     calcMode="spline"
-                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
                     repeatCount="indefinite"
                   />`:eG}
             </path>

@@ -126,15 +126,29 @@ export class WfcWindIndicator extends LitElement {
     const flagRotation =
       isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
     const animationDuration = 2.2 - 1.8 * speedRatio;
-    const wave = 1 + 3.5 * speedRatio;
+    const wave = 1 + 6 * speedRatio;
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const shouldAnimate = !isCalm && !reduceMotion;
-    const flagFrameOne = `M8 4 C14 ${4 - wave} 18 ${5 + wave} 24 ${5 + wave} C31 ${6 + wave} 37 ${5 - wave} 44 5 L44 18 C37 ${19 - wave} 31 ${17 + wave} 25 ${17 + wave} C19 ${17 + wave} 14 ${18 - wave} 8 20 Z`;
-    const flagFrameTwo = `M8 4 C14 ${4 + wave} 18 ${5 - wave} 24 ${5 - wave} C31 ${6 - wave} 37 ${5 + wave} 44 5 L44 18 C37 ${19 + wave} 31 ${17 - wave} 25 ${17 - wave} C19 ${17 - wave} 14 ${18 + wave} 8 20 Z`;
-    const foldFrameOne = "M9 8 C16 6 20 8 25 12 C31 16 37 16 43 13";
-    const foldFrameTwo = "M9 8 C16 11 20 7 25 10 C31 14 37 18 43 13";
+    const wavePhases = [
+      [-1, 0, 1, 1, 0],
+      [0, -1, 0, 1, 1],
+      [1, 0, -1, 0, 1],
+      [1, 1, 0, -1, 0],
+      [-1, 0, 1, 1, 0],
+    ] as const;
+    const flagFrames = wavePhases.map(([a, b, c, d, e]) => {
+      const y14 = 4 + a * wave;
+      const y18 = 4 + b * wave;
+      const y24 = 5 + c * wave;
+      const y31 = 6 + d * wave;
+      const y37 = 5 + e * wave;
+      return `M8 4 C14 ${y14} 18 ${y18} 24 ${y24} C31 ${y31} 37 ${y37} 44 5 L44 18 C37 ${19 + e * wave} 31 ${17 + d * wave} 25 ${17 + c * wave} C19 ${17 + b * wave} 14 ${18 + a * wave} 8 20 Z`;
+    });
+    const foldFrames = wavePhases.map(([a, b, c, d, e]) =>
+      `M9 8 C16 ${8 + a * wave * 0.55} 20 ${8 + b * wave * 0.55} 25 ${12 + c * wave * 0.55} C31 ${16 + d * wave * 0.55} 37 ${16 + e * wave * 0.55} 43 13`
+    );
     const speedLabel = `${speed} ${shownUnit}`;
 
     return html`
@@ -165,10 +179,10 @@ export class WfcWindIndicator extends LitElement {
                 ? svg`<animate
                     attributeName="d"
                     dur="${animationDuration}s"
-                    values="${flagFrameOne};${flagFrameTwo};${flagFrameOne}"
-                    keyTimes="0;0.5;1"
+                    values="${flagFrames.join(";")}"
+                    keyTimes="0;0.25;0.5;0.75;1"
                     calcMode="spline"
-                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
                     repeatCount="indefinite"
                   />`
                 : nothing}
@@ -181,10 +195,10 @@ export class WfcWindIndicator extends LitElement {
                 ? svg`<animate
                     attributeName="d"
                     dur="${animationDuration}s"
-                    values="${foldFrameOne};${foldFrameTwo};${foldFrameOne}"
-                    keyTimes="0;0.5;1"
+                    values="${foldFrames.join(";")}"
+                    keyTimes="0;0.25;0.5;0.75;1"
                     calcMode="spline"
-                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1"
+                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
                     repeatCount="indefinite"
                   />`
                 : nothing}
