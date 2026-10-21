@@ -1,4 +1,4 @@
-import { LitElement, html, css, TemplateResult, nothing, svg } from "lit";
+import { LitElement, html, css, TemplateResult, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { ExtendedHomeAssistant } from "../types";
 import {
@@ -54,20 +54,59 @@ export class WfcWindIndicator extends LitElement {
   @property({ attribute: false }) weatherEntity!: WeatherEntity;
   @property({ attribute: false }) forecast!: ForecastAttribute;
   @property({ attribute: false }) size = 35;
-  @property({ attribute: false }) radius = 20;
   @property({ attribute: false }) type: "bearing" | "direction" = "bearing";
   @property({ attribute: false }) displayUnit: ForecastWindSpeedUnit = "entity";
 
   static styles = css`
     :host {
-      display: inline-block;
+      display: flex;
+      width: 40px;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
     }
-    text {
-      font-size: calc(var(--ha-font-size-l, 16px) * 1.4);
-      fill: var(--primary-text-color);
+    .wfc-wind-flag {
+      display: block;
+      overflow: visible;
+    }
+    .wfc-wind-flag-mast {
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      opacity: 0.8;
+    }
+    .wfc-wind-flag-cloth {
+      fill: currentColor;
+      transform-box: fill-box;
+      transform-origin: left center;
+    }
+    .wfc-wind-flag-cloth.is-moving {
+      animation: wfc-wind-flag-wave var(--wfc-wind-flag-duration) ease-in-out
+        infinite alternate;
+    }
+    .wfc-wind-speed {
+      color: var(--primary-text-color);
+      font-size: var(--ha-font-size-xs, 12px);
       font-weight: 600;
-      text-anchor: middle;
-      dominant-baseline: middle;
+      line-height: 14px;
+      text-align: center;
+      white-space: nowrap;
+    }
+    @keyframes wfc-wind-flag-wave {
+      0% {
+        transform: rotate(var(--wfc-wind-flag-counter-sway)) scaleX(0.92);
+      }
+      50% {
+        transform: rotate(0deg) scaleX(1);
+      }
+      100% {
+        transform: rotate(var(--wfc-wind-flag-sway)) scaleX(0.88);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .wfc-wind-flag-cloth.is-moving {
+        animation: none;
+      }
     }
   `;
 
@@ -76,7 +115,7 @@ export class WfcWindIndicator extends LitElement {
       return nothing;
     }
 
-    const rawWindSpeed = this.forecast.wind_speed || 0;
+    const rawWindSpeed = this.forecast.wind_speed ?? 0;
     const sourceUnit = getWeatherUnit(this.hass, this.weatherEntity, "wind_speed");
     const targetUnit = this.displayUnit === "entity" ? sourceUnit : this.displayUnit;
     const convertedSpeed = convertWindSpeed(
@@ -87,14 +126,7 @@ export class WfcWindIndicator extends LitElement {
     const windSpeed = convertedSpeed ?? rawWindSpeed;
     const shownUnit = convertedSpeed === undefined ? sourceUnit : targetUnit;
     const windBearing = getNormalizedWindBearing(this.forecast);
-
-    const R = this.radius;
-    const strokeWidth = 4;
-    const padding = 10;
-    const cx = R + padding;
-    const cy = R + padding;
-    const boxSize = 2 * (R + padding);
-
+    const windSpeedKmh = convertWindSpeed(rawWindSpeed, sourceUnit, "km/h") ?? 0;
     const speed = Math.round(windSpeed);
     const lineColor = this.computeLineColor();
 
@@ -104,40 +136,42 @@ export class WfcWindIndicator extends LitElement {
     }
 
     const hasBearing = Number.isFinite(bearing);
-
-    const baseY = cy - R;
-    const tipOffset = R * 0.55;
-    const tipY = baseY - tipOffset;
-    const spreadX = R * 0.45;
+    const isCalm = windSpeedKmh < 2;
+    const speedRatio = Math.max(0, Math.min(1, (windSpeedKmh - 2) / 38));
+    const flagRotation =
+      isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
+    const animationDuration = 3.4 - 3 * speedRatio;
+    const flagSway = 1 + 13 * speedRatio;
+    const speedLabel = `${speed} ${shownUnit}`;
 
     return html`
-      <svg
-        width="${this.size}"
-        height="${this.size}"
-        viewBox="0 0 ${boxSize} ${boxSize}"
+      <div
+        class="wfc-wind-indicator"
         role="img"
         aria-label="${hasBearing
-          ? `Wind speed: ${speed} ${shownUnit}, bearing: ${bearing} degrees`
-          : `Wind speed: ${speed} ${shownUnit}`}"
+          ? this.type === "direction"
+            ? `Wind speed: ${speedLabel}, blowing toward ${bearing} degrees`
+            : `Wind speed: ${speedLabel}, bearing from ${bearing} degrees`
+          : `Wind speed: ${speedLabel}`}"
+        style="color: ${lineColor}; --wfc-wind-flag-duration: ${animationDuration}s; --wfc-wind-flag-sway: ${flagSway}deg; --wfc-wind-flag-counter-sway: -${flagSway}deg"
       >
-        <circle
-          cx="${cx}"
-          cy="${cy}"
-          r="${R}"
-          stroke="${lineColor}"
-          stroke-width="${strokeWidth}"
-          fill="none"
-        />
-        ${hasBearing
-          ? svg` <g transform="rotate(${bearing} ${cx} ${cy})">
-              <polygon
-                points="${cx - spreadX},${baseY} ${cx + spreadX},${baseY} ${cx},${tipY}"
-                fill="${lineColor}"
-              />
-            </g>`
-          : nothing}
-        <text x="${cx}" y="${cy}" dy="0.1em">${speed}</text>
-      </svg>
+        <svg
+          class="wfc-wind-flag"
+          width="${this.size}"
+          height="24"
+          viewBox="0 0 32 24"
+          aria-hidden="true"
+        >
+          <path class="wfc-wind-flag-mast" d="M8 3v18" />
+          <g transform="rotate(${flagRotation} 8 9)">
+            <path
+              class="wfc-wind-flag-cloth ${isCalm ? "" : "is-moving"}"
+              d="M8 4 C14 4 18 6 25 3 C23 7 24 9 28 11 C23 13 23 16 26 19 C19 16 13 14 8 14 Z"
+            />
+          </g>
+        </svg>
+        <span class="wfc-wind-speed">${speed}</span>
+      </div>
     `;
   }
 
