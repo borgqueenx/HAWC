@@ -60,8 +60,8 @@ const blendColor = (
     .join(", ")})`;
 
 const getWindFlagColor = (speedKmh: number): string => {
-  const middleYellow: readonly [number, number, number] = [255, 249, 226];
-  const highWindRed: readonly [number, number, number] = [255, 239, 238];
+  const middleYellow: readonly [number, number, number] = [255, 240, 185];
+  const highWindRed: readonly [number, number, number] = [255, 218, 216];
 
   if (speedKmh <= 2) {
     return "rgb(255, 255, 255)";
