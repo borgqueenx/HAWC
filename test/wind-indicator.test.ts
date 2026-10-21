@@ -68,7 +68,7 @@ describe("wfc-wind-indicator", () => {
       expect(element.shadowRoot?.querySelector("svg")).toBeNull();
     });
 
-    it("should render svg with circle and arrow for valid data", async () => {
+    it("should render a wind flag and speed label for valid data", async () => {
       const element = await createFixture({
         windSpeed: 10,
         windBearing: 180,
@@ -76,19 +76,20 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
-      expect(svg?.querySelector("circle")).not.toBeNull();
-      expect(svg?.querySelector("polygon")).not.toBeNull();
-      expect(svg?.querySelector("text")).not.toBeNull();
+      expect(svg?.querySelector(".wfc-wind-flag-mast")).not.toBeNull();
+      expect(svg?.querySelector(".wfc-wind-flag-cloth")).not.toBeNull();
+      expect(svg?.querySelector(".wfc-wind-speed")).not.toBeNull();
     });
 
-    it("should display wind speed as text inside circle", async () => {
+    it("should display wind speed in a centered label", async () => {
       const element = await createFixture({
         windSpeed: 15.7,
         windBearing: 90,
       });
 
-      const text = element.shadowRoot?.querySelector("text");
+      const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
       expect(text?.textContent).toBe("16"); // rounded
+      expect(text?.getAttribute("x")).toBe("24");
     });
 
     it("should handle zero wind speed", async () => {
@@ -97,7 +98,7 @@ describe("wfc-wind-indicator", () => {
         windBearing: 0,
       });
 
-      const text = element.shadowRoot?.querySelector("text");
+      const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
       expect(text?.textContent).toBe("0");
     });
 
@@ -107,9 +108,9 @@ describe("wfc-wind-indicator", () => {
         windBearing: 270,
       });
 
-      const svg = element.shadowRoot?.querySelector("svg");
-      expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 12 m/s, bearing: 270 degrees"
+      const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
+      expect(indicator?.getAttribute("aria-label")).toBe(
+        "Wind speed: 12 m/s, bearing from 270 degrees"
       );
     });
 
@@ -132,7 +133,7 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
-      const text = element.shadowRoot?.querySelector("text");
+      const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
       expect(text?.textContent).toBe("0"); // defaults to 0
     });
 
@@ -155,8 +156,8 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
-      const group = element.shadowRoot?.querySelector("g");
-      expect(group).toBeNull(); // No tip rendered by default
+      const group = element.shadowRoot?.querySelector("g g");
+      expect(group?.getAttribute("transform")).toContain("rotate(0");
     });
 
     it("should render with default values when both wind properties are undefined", async () => {
@@ -176,10 +177,10 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
-      const text = element.shadowRoot?.querySelector("text");
+      const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
       expect(text?.textContent).toBe("0");
-      const group = element.shadowRoot?.querySelector("g");
-      expect(group).toBeNull();
+      const group = element.shadowRoot?.querySelector("g g");
+      expect(group?.getAttribute("transform")).toContain("rotate(90");
     });
   });
 
@@ -190,9 +191,9 @@ describe("wfc-wind-indicator", () => {
         windBearing: 0,
       });
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(0");
+      expect(transform).toContain("rotate(-90");
     });
 
     it("should apply correct rotation transform for east (90 degrees)", async () => {
@@ -201,9 +202,9 @@ describe("wfc-wind-indicator", () => {
         windBearing: 90,
       });
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(90");
+      expect(transform).toContain("rotate(0");
     });
 
     it("should apply correct rotation transform for south (180 degrees)", async () => {
@@ -212,9 +213,9 @@ describe("wfc-wind-indicator", () => {
         windBearing: 180,
       });
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(180");
+      expect(transform).toContain("rotate(90");
     });
 
     it("should apply correct rotation transform for west (270 degrees)", async () => {
@@ -223,9 +224,9 @@ describe("wfc-wind-indicator", () => {
         windBearing: 270,
       });
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(270");
+      expect(transform).toContain("rotate(180");
     });
   });
 
@@ -237,9 +238,9 @@ describe("wfc-wind-indicator", () => {
         type: "bearing",
       });
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(45");
+      expect(transform).toContain("rotate(-45");
     });
 
     it('should add 180 degrees when type is "direction"', async () => {
@@ -249,10 +250,10 @@ describe("wfc-wind-indicator", () => {
         type: "direction",
       });
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
       // 45 + 180 = 225
-      expect(transform).toContain("rotate(225");
+      expect(transform).toContain("rotate(135");
     });
 
     it('should wrap around 360 when type is "direction" and bearing + 180 > 360', async () => {
@@ -262,10 +263,10 @@ describe("wfc-wind-indicator", () => {
         type: "direction",
       });
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
       // (270 + 180) % 360 = 90
-      expect(transform).toContain("rotate(90");
+      expect(transform).toContain("rotate(0");
     });
 
     it('should use original bearing in aria-label when type is "bearing"', async () => {
@@ -275,9 +276,9 @@ describe("wfc-wind-indicator", () => {
         type: "bearing",
       });
 
-      const svg = element.shadowRoot?.querySelector("svg");
-      expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10 m/s, bearing: 45 degrees"
+      const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
+      expect(indicator?.getAttribute("aria-label")).toBe(
+        "Wind speed: 10 m/s, bearing from 45 degrees"
       );
     });
 
@@ -288,10 +289,10 @@ describe("wfc-wind-indicator", () => {
         type: "direction",
       });
 
-      const svg = element.shadowRoot?.querySelector("svg");
+      const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
       // 45 + 180 = 225
-      expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10 m/s, bearing: 225 degrees"
+      expect(indicator?.getAttribute("aria-label")).toBe(
+        "Wind speed: 10 m/s, blowing toward 225 degrees"
       );
     });
 
@@ -302,56 +303,31 @@ describe("wfc-wind-indicator", () => {
         type: "direction",
       });
 
-      const svg = element.shadowRoot?.querySelector("svg");
+      const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
       // (270 + 180) % 360 = 90
-      expect(svg?.getAttribute("aria-label")).toBe(
-        "Wind speed: 10 m/s, bearing: 90 degrees"
+      expect(indicator?.getAttribute("aria-label")).toBe(
+        "Wind speed: 10 m/s, blowing toward 90 degrees"
       );
     });
   });
 
   describe("wind speed colors", () => {
-    it("should use low wind color for calm wind (0-3 m/s)", async () => {
-      // MockHass uses m/s for wind speed
-      const element = await createFixture({
-        windSpeed: 2,
-        windBearing: 0,
-      });
-
-      const circle = element.shadowRoot?.querySelector("circle");
-      const polygon = element.shadowRoot?.querySelector("polygon");
-
-      // Should use --wfc-wind-low CSS variable
-      expect(circle?.getAttribute("stroke")).toBe("var(--wfc-wind-low)");
-      expect(polygon?.getAttribute("fill")).toBe("var(--wfc-wind-low)");
+    it("should keep calm wind flags white", async () => {
+      const element = await createFixture({ windSpeed: 0, windBearing: 0 });
+      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
+      expect(cloth?.style.fill).toBe("rgb(255, 255, 255)");
     });
 
-    it("should use medium wind color for moderate wind (3-8 m/s)", async () => {
-      // MockHass uses m/s for wind speed
-      const element = await createFixture({
-        windSpeed: 5,
-        windBearing: 0,
-      });
-
-      const circle = element.shadowRoot?.querySelector("circle");
-      const polygon = element.shadowRoot?.querySelector("polygon");
-
-      expect(circle?.getAttribute("stroke")).toBe("var(--wfc-wind-medium)");
-      expect(polygon?.getAttribute("fill")).toBe("var(--wfc-wind-medium)");
+    it("should tint the flag warm yellow at moderate speeds", async () => {
+      const element = await createFixture({ windSpeed: 18 / 3.6, windBearing: 0 });
+      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
+      expect(cloth?.style.fill).toBe("rgb(255, 242, 193)");
     });
 
-    it("should use high wind color for strong wind (>8 m/s)", async () => {
-      // MockHass uses m/s for wind speed
-      const element = await createFixture({
-        windSpeed: 10,
-        windBearing: 0,
-      });
-
-      const circle = element.shadowRoot?.querySelector("circle");
-      const polygon = element.shadowRoot?.querySelector("polygon");
-
-      expect(circle?.getAttribute("stroke")).toBe("var(--wfc-wind-high)");
-      expect(polygon?.getAttribute("fill")).toBe("var(--wfc-wind-high)");
+    it("should tint the flag red at high speeds", async () => {
+      const element = await createFixture({ windSpeed: 36 / 3.6, windBearing: 0 });
+      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
+      expect(cloth?.style.fill).toBe("rgb(255, 222, 210)");
     });
   });
 
@@ -374,9 +350,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(0");
+      expect(transform).toContain("rotate(-90");
     });
 
     it("should handle cardinal direction 'E' (90 degrees)", async () => {
@@ -397,9 +373,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(90");
+      expect(transform).toContain("rotate(0");
     });
 
     it("should handle cardinal direction 'S' (180 degrees)", async () => {
@@ -420,9 +396,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(180");
+      expect(transform).toContain("rotate(90");
     });
 
     it("should handle cardinal direction 'W' (270 degrees)", async () => {
@@ -443,9 +419,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(270");
+      expect(transform).toContain("rotate(180");
     });
 
     it("should handle intercardinal direction 'NE' (45 degrees)", async () => {
@@ -466,9 +442,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(45");
+      expect(transform).toContain("rotate(-45");
     });
 
     it("should handle intercardinal direction 'SE' (135 degrees)", async () => {
@@ -489,9 +465,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(135");
+      expect(transform).toContain("rotate(45");
     });
 
     it("should handle intercardinal direction 'SW' (225 degrees)", async () => {
@@ -512,9 +488,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(225");
+      expect(transform).toContain("rotate(135");
     });
 
     it("should handle intercardinal direction 'NW' (315 degrees)", async () => {
@@ -535,9 +511,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(315");
+      expect(transform).toContain("rotate(225");
     });
 
     it("should handle lowercase cardinal directions (case-insensitive)", async () => {
@@ -558,9 +534,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(45");
+      expect(transform).toContain("rotate(-45");
     });
 
     it("should handle numeric string wind bearings", async () => {
@@ -581,9 +557,9 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(180");
+      expect(transform).toContain("rotate(90");
     });
 
     it("should handle decimal numeric string wind bearings", async () => {
@@ -604,12 +580,12 @@ describe("wfc-wind-indicator", () => {
       );
       await element.updateComplete;
 
-      const group = element.shadowRoot?.querySelector("g");
+      const group = element.shadowRoot?.querySelector("g g");
       const transform = group?.getAttribute("transform");
-      expect(transform).toContain("rotate(45.5");
+      expect(transform).toContain("rotate(-44.5");
     });
 
-    it("should not render tip for invalid cardinal direction strings", async () => {
+    it("should render a static flag for invalid cardinal direction strings", async () => {
       const mockHass = new MockHass();
       const hass = mockHass.getHass() as ExtendedHomeAssistant;
       const weatherEntity = hass.states["weather.demo"];
@@ -629,12 +605,13 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
-      const polygon = element.shadowRoot?.querySelector("polygon");
-      expect(polygon).toBeNull();
-      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
+      const polygon = element.shadowRoot?.querySelector(".wfc-wind-flag-cloth");
+      expect(polygon).not.toBeNull();
+      const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
+      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
     });
 
-    it("should not render tip for empty string wind bearing", async () => {
+    it("should render a static flag for empty string wind bearing", async () => {
       const mockHass = new MockHass();
       const hass = mockHass.getHass() as ExtendedHomeAssistant;
       const weatherEntity = hass.states["weather.demo"];
@@ -654,12 +631,13 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
-      const polygon = element.shadowRoot?.querySelector("polygon");
-      expect(polygon).toBeNull();
-      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
+      const polygon = element.shadowRoot?.querySelector(".wfc-wind-flag-cloth");
+      expect(polygon).not.toBeNull();
+      const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
+      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
     });
 
-    it("should not render tip for NaN numeric string wind bearing", async () => {
+    it("should render a static flag for NaN numeric string wind bearing", async () => {
       const mockHass = new MockHass();
       const hass = mockHass.getHass() as ExtendedHomeAssistant;
       const weatherEntity = hass.states["weather.demo"];
@@ -679,9 +657,10 @@ describe("wfc-wind-indicator", () => {
 
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
-      const polygon = element.shadowRoot?.querySelector("polygon");
-      expect(polygon).toBeNull();
-      expect(svg?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
+      const polygon = element.shadowRoot?.querySelector(".wfc-wind-flag-cloth");
+      expect(polygon).not.toBeNull();
+      const indicator = element.shadowRoot?.querySelector(".wfc-wind-indicator");
+      expect(indicator?.getAttribute("aria-label")).toBe("Wind speed: 10 m/s");
     });
   });
 
@@ -709,25 +688,15 @@ describe("wfc-wind-indicator", () => {
       expect(svg?.getAttribute("height")).toBe("50");
     });
 
-    it("should use default radius of 20", async () => {
-      const element = await createFixture({
-        windSpeed: 10,
-        windBearing: 0,
-      });
+    it("should use fixed flag geometry with a square mast edge and rounded tip", async () => {
+      const element = await createFixture({ windSpeed: 10, windBearing: 0 });
+      const svg = element.shadowRoot?.querySelector("svg");
+      const mast = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-mast");
+      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
 
-      const circle = element.shadowRoot?.querySelector("circle");
-      expect(circle?.getAttribute("r")).toBe("20");
-    });
-
-    it("should accept custom radius", async () => {
-      const element = await createFixture({
-        windSpeed: 10,
-        windBearing: 0,
-        radius: 25,
-      });
-
-      const circle = element.shadowRoot?.querySelector("circle");
-      expect(circle?.getAttribute("r")).toBe("25");
+      expect(svg?.getAttribute("viewBox")).toBe("0 0 48 48");
+      expect(mast?.getAttribute("d")).toBe("M8 3v26");
+      expect(cloth?.getAttribute("d")).toContain("Q46 9 46 11");
     });
   });
 });
@@ -739,7 +708,6 @@ interface CreateFixtureOptions {
   windSpeed: number;
   windBearing: number;
   size?: number;
-  radius?: number;
   type?: "bearing" | "direction";
 }
 
@@ -765,7 +733,6 @@ const createFixture = async (options: CreateFixtureOptions) => {
 
   // Only override defaults if explicitly provided
   if (options.size !== undefined) element.size = options.size;
-  if (options.radius !== undefined) element.radius = options.radius;
 
   await element.updateComplete;
 

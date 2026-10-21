@@ -48,26 +48,80 @@ const convertWindSpeed = (
   return (speed * fromFactor) / toFactor;
 };
 
+const blendColor = (
+  start: readonly [number, number, number],
+  end: readonly [number, number, number],
+  amount: number
+): string =>
+  `rgb(${start
+    .map((channel, index) =>
+      Math.round(channel + (end[index] - channel) * amount)
+    )
+    .join(", ")})`;
+
+const getWindFlagColor = (speedKmh: number): string => {
+  const middleYellow: readonly [number, number, number] = [255, 240, 185];
+  const highWindRed: readonly [number, number, number] = [255, 218, 216];
+
+  if (speedKmh <= 2) {
+    return "rgb(255, 255, 255)";
+  }
+  if (speedKmh <= 20) {
+    return blendColor([255, 255, 255], middleYellow, (speedKmh - 2) / 18);
+  }
+  return blendColor(middleYellow, highWindRed, (speedKmh - 20) / 20);
+};
+
 @customElement("wfc-wind-indicator")
 export class WfcWindIndicator extends LitElement {
   @property({ attribute: false }) hass!: ExtendedHomeAssistant;
   @property({ attribute: false }) weatherEntity!: WeatherEntity;
   @property({ attribute: false }) forecast!: ForecastAttribute;
   @property({ attribute: false }) size = 35;
-  @property({ attribute: false }) radius = 20;
   @property({ attribute: false }) type: "bearing" | "direction" = "bearing";
   @property({ attribute: false }) displayUnit: ForecastWindSpeedUnit = "entity";
 
   static styles = css`
     :host {
-      display: inline-block;
+      display: flex;
+      width: 40px;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
     }
-    text {
-      font-size: calc(var(--ha-font-size-l, 16px) * 1.4);
+    .wfc-wind-flag {
+      display: block;
+      overflow: visible;
+    }
+    .wfc-wind-flag-mast {
+      stroke: currentColor;
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      opacity: 0.8;
+    }
+    .wfc-wind-flag-cloth {
+      fill: #f4f6f7;
+    }
+    .wfc-wind-flag-accent {
+      fill: #d94b50;
+      pointer-events: none;
+    }
+    .wfc-wind-flag-fold {
+      fill: none;
+      stroke: #fff;
+      stroke-width: 0.7;
+      opacity: 0.28;
+      pointer-events: none;
+    }
+    .wfc-wind-speed {
       fill: var(--primary-text-color);
+      font-size: 16px;
       font-weight: 600;
       text-anchor: middle;
-      dominant-baseline: middle;
+      paint-order: stroke;
+      stroke: var(--ha-card-background, var(--card-background-color, #1a2634));
+      stroke-width: 3.5px;
+      stroke-linejoin: round;
     }
   `;
 
@@ -76,7 +130,7 @@ export class WfcWindIndicator extends LitElement {
       return nothing;
     }
 
-    const rawWindSpeed = this.forecast.wind_speed || 0;
+    const rawWindSpeed = this.forecast.wind_speed ?? 0;
     const sourceUnit = getWeatherUnit(this.hass, this.weatherEntity, "wind_speed");
     const targetUnit = this.displayUnit === "entity" ? sourceUnit : this.displayUnit;
     const convertedSpeed = convertWindSpeed(
@@ -87,14 +141,7 @@ export class WfcWindIndicator extends LitElement {
     const windSpeed = convertedSpeed ?? rawWindSpeed;
     const shownUnit = convertedSpeed === undefined ? sourceUnit : targetUnit;
     const windBearing = getNormalizedWindBearing(this.forecast);
-
-    const R = this.radius;
-    const strokeWidth = 4;
-    const padding = 10;
-    const cx = R + padding;
-    const cy = R + padding;
-    const boxSize = 2 * (R + padding);
-
+    const windSpeedKmh = convertWindSpeed(rawWindSpeed, sourceUnit, "km/h") ?? 0;
     const speed = Math.round(windSpeed);
     const lineColor = this.computeLineColor();
 
@@ -104,40 +151,137 @@ export class WfcWindIndicator extends LitElement {
     }
 
     const hasBearing = Number.isFinite(bearing);
-
-    const baseY = cy - R;
-    const tipOffset = R * 0.55;
-    const tipY = baseY - tipOffset;
-    const spreadX = R * 0.45;
+    const isCalm = windSpeedKmh < 2;
+    const speedRatio = Math.max(0, Math.min(1, (windSpeedKmh - 2) / 38));
+    const windFlagColor = getWindFlagColor(windSpeedKmh);
+    const flagRotation =
+      isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
+    const flagAngle = (flagRotation * Math.PI) / 180;
+    const flagCenterX = 8 + 18 * Math.cos(flagAngle) - 3 * Math.sin(flagAngle);
+    const flagCenterY = 9 + 18 * Math.sin(flagAngle) + 3 * Math.cos(flagAngle);
+    const flagOffsetX = 24 - flagCenterX;
+    const flagOffsetY = 20 - flagCenterY;
+    const baseAnimationDuration = 2.2 - 1.8 * speedRatio;
+    const mediumSpeedBoost =
+      0.4 *
+      (speedRatio <= 0.42
+        ? speedRatio / 0.42
+        : (1 - speedRatio) / 0.58);
+    const animationDuration = baseAnimationDuration / (1 + mediumSpeedBoost);
+    const wave = 1 + 6 * speedRatio;
+    const reduceMotion =
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    const shouldAnimate = !isCalm && !reduceMotion;
+    const wavePhases: readonly (readonly [number, number, number, number, number])[] =
+      Array.from({ length: 17 }, (_, frame) => {
+        const phase = (2 * Math.PI * frame) / 16;
+        return [
+          Math.sin(phase),
+          Math.sin(phase - 0.8),
+          Math.sin(phase - 1.6),
+          Math.sin(phase - 2.4),
+          Math.sin(phase - 3.2),
+        ] as const;
+      });
+    const waveKeyTimes = wavePhases
+      .map((_, frame) => frame / (wavePhases.length - 1))
+      .join(";");
+    const flagFrames = wavePhases.map(([a, b, c, d, e]) => {
+      const y14 = 4 + a * wave;
+      const y18 = 4 + b * wave;
+      const y24 = 5 + c * wave;
+      const y31 = 6 + d * wave;
+      const y37 = 5 + e * wave;
+      const topTip = 5 + e * wave;
+      const bottomTip = 18 + e * wave;
+      return `M8 4 C14 ${y14} 18 ${y18} 24 ${y24} C31 ${y31} 37 ${y37} 44 ${topTip} Q46 ${topTip} 46 ${topTip + 3} L46 ${bottomTip - 3} Q46 ${bottomTip} 43 ${bottomTip} C37 ${19 + e * wave} 31 ${17 + d * wave} 25 ${17 + c * wave} C19 ${17 + b * wave} 14 ${18 + a * wave} 8 20 Z`;
+    });
+    const foldFrames = wavePhases.map(([a, b, c, d, e]) =>
+      `M9 8 C16 ${8 + a * wave * 0.55} 20 ${8 + b * wave * 0.55} 25 ${12 + c * wave * 0.55} C31 ${16 + d * wave * 0.55} 37 ${16 + e * wave * 0.55} 43 13`
+    );
+    const accentFrames = wavePhases.map(([a, b, c, d, e]) =>
+      `M8 4 C14 ${4 + a * wave} 18 ${4 + b * wave} 24 ${5 + c * wave} C31 ${6 + d * wave} 37 ${6 + e * wave} 44 5 Q46 5 46 6.5 L46 7.5 Q46 8 44 8 C37 ${8 + e * wave} 31 ${8 + d * wave} 25 ${7 + c * wave} C19 ${6 + b * wave} 14 ${6 + a * wave} 8 7 Z`
+    );
+    const accentOpacity = Math.max(
+      0,
+      Math.min(0.12, ((windSpeedKmh - 30) / 10) * 0.12)
+    );
+    const speedLabel = `${speed} ${shownUnit}`;
 
     return html`
-      <svg
-        width="${this.size}"
-        height="${this.size}"
-        viewBox="0 0 ${boxSize} ${boxSize}"
+      <div
+        class="wfc-wind-indicator"
         role="img"
         aria-label="${hasBearing
-          ? `Wind speed: ${speed} ${shownUnit}, bearing: ${bearing} degrees`
-          : `Wind speed: ${speed} ${shownUnit}`}"
+          ? this.type === "direction"
+            ? `Wind speed: ${speedLabel}, blowing toward ${bearing} degrees`
+            : `Wind speed: ${speedLabel}, bearing from ${bearing} degrees`
+          : `Wind speed: ${speedLabel}`}"
+        style="color: ${lineColor}"
       >
-        <circle
-          cx="${cx}"
-          cy="${cy}"
-          r="${R}"
-          stroke="${lineColor}"
-          stroke-width="${strokeWidth}"
-          fill="none"
-        />
-        ${hasBearing
-          ? svg` <g transform="rotate(${bearing} ${cx} ${cy})">
-              <polygon
-                points="${cx - spreadX},${baseY} ${cx + spreadX},${baseY} ${cx},${tipY}"
-                fill="${lineColor}"
-              />
-            </g>`
-          : nothing}
-        <text x="${cx}" y="${cy}" dy="0.1em">${speed}</text>
-      </svg>
+        <svg
+          class="wfc-wind-flag"
+          width="${this.size}"
+          height="${this.size}"
+          viewBox="0 0 48 48"
+          aria-hidden="true"
+        >
+          <g transform="translate(${flagOffsetX} ${flagOffsetY})">
+            <path class="wfc-wind-flag-mast" d="M8 3v26" />
+            <g transform="rotate(${flagRotation} 8 9)">
+              <path
+                class="wfc-wind-flag-cloth"
+                style="fill: ${windFlagColor}"
+                d="M8 4 C15 1 20 4 25 8 C31 13 36 12 44 9 Q46 9 46 11 L46 13 Q46 15 44 15 C37 20 32 21 25 16 C18 11 14 12 8 20 Z"
+              >
+                ${shouldAnimate
+                  ? svg`<animate
+                      attributeName="d"
+                      dur="${animationDuration}s"
+                      values="${flagFrames.join(";")}"
+                      keyTimes="${waveKeyTimes}"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />`
+                  : nothing}
+              </path>
+              <path
+                class="wfc-wind-flag-accent"
+                d="${accentFrames[0]}"
+                style="opacity: ${accentOpacity}"
+              >
+                ${shouldAnimate && accentOpacity > 0
+                  ? svg`<animate
+                      attributeName="d"
+                      dur="${animationDuration}s"
+                      values="${accentFrames.join(";")}"
+                      keyTimes="${waveKeyTimes}"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />`
+                  : nothing}
+              </path>
+              <path
+                class="wfc-wind-flag-fold"
+                d="M9 8 C16 5 20 8 25 12 C31 17 37 17 43 13"
+              >
+                ${shouldAnimate
+                  ? svg`<animate
+                      attributeName="d"
+                      dur="${animationDuration}s"
+                      values="${foldFrames.join(";")}"
+                      keyTimes="${waveKeyTimes}"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />`
+                  : nothing}
+              </path>
+            </g>
+          </g>
+          <text class="wfc-wind-speed" x="24" y="46">${speed}</text>
+        </svg>
+      </div>
     `;
   }
 
