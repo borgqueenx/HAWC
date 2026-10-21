@@ -88,7 +88,7 @@ describe("wfc-wind-indicator", () => {
       });
 
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
-      expect(text?.firstChild?.textContent).toBe("16"); // rounded
+      expect(text?.textContent).toBe("16km/h"); // rounded
       expect(text?.querySelector(".wfc-wind-speed-unit")?.textContent).toBe("km/h");
       expect(text?.getAttribute("x")).toBe("24");
     });
@@ -100,7 +100,7 @@ describe("wfc-wind-indicator", () => {
       });
 
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
-      expect(text?.textContent).toBe("0");
+      expect(text?.textContent).toBe("0km/h");
     });
 
     it("should set aria-label with wind data", async () => {
@@ -135,7 +135,7 @@ describe("wfc-wind-indicator", () => {
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
-      expect(text?.textContent).toBe("0"); // defaults to 0
+      expect(text?.textContent).toBe("0km/h"); // defaults to 0
     });
 
     it("should render with default values when wind_bearing is undefined", async () => {
@@ -179,7 +179,7 @@ describe("wfc-wind-indicator", () => {
       const svg = element.shadowRoot?.querySelector("svg");
       expect(svg).not.toBeNull();
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
-      expect(text?.textContent).toBe("0");
+      expect(text?.textContent).toBe("0km/h");
       const group = element.shadowRoot?.querySelector("g g");
       expect(group?.getAttribute("transform")).toContain("rotate(90");
     });
@@ -697,7 +697,7 @@ describe("wfc-wind-indicator", () => {
 
       expect(svg?.getAttribute("viewBox")).toBe("0 0 48 48");
       expect(mast?.getAttribute("d")).toBe("M8 3v26");
-      expect(cloth?.getAttribute("d")).toContain("Q46 9 46 11");
+      expect(cloth?.getAttribute("d")).toContain("Q46 8 46 12");
     });
   });
 });
