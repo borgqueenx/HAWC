@@ -60,14 +60,10 @@ const blendColor = (
     .join(", ")})`;
 
 const getWindFlagColor = (speedKmh: number): string => {
-  if (speedKmh < 25) {
-    return "rgba(255, 165, 0, 0)";
-  }
-
   const transition = Math.max(0, Math.min(1, (speedKmh - 25) / 15));
-  const tint = blendColor([255, 165, 0], [235, 45, 35], transition);
-  const opacity = 0.08 + transition * 0.34;
-  return tint.replace("rgb(", "rgba(").replace(")", `, ${opacity})`);
+  const start: readonly [number, number, number] = [255, 206, 153];
+  const end: readonly [number, number, number] = [255, 158, 145];
+  return speedKmh < 25 ? "rgb(255, 255, 255)" : blendColor(start, end, transition);
 };
 
 @customElement("wfc-wind-indicator")
@@ -99,9 +95,6 @@ export class WfcWindIndicator extends LitElement {
     }
     .wfc-wind-flag-cloth {
       fill: #f4f6f7;
-    }
-    .wfc-wind-flag-tint {
-      pointer-events: none;
     }
     .wfc-wind-flag-accent {
       fill: #d94b50;
@@ -234,22 +227,6 @@ export class WfcWindIndicator extends LitElement {
             <g transform="rotate(${flagRotation} 8 9)">
               <path
                 class="wfc-wind-flag-cloth"
-                style="fill: ${windFlagColor}"
-                d="M8 4 C15 1 20 4 25 8 C31 13 36 12 42 8 Q46 8 46 12 L46 14 Q46 18 42 18 C37 19 32 21 25 16 C18 11 14 12 8 20 Z"
-              >
-                ${shouldAnimate
-                  ? svg`<animate
-                      attributeName="d"
-                      dur="${animationDuration}s"
-                      values="${flagFrames.join(";")}"
-                      keyTimes="${waveKeyTimes}"
-                      calcMode="linear"
-                      repeatCount="indefinite"
-                    />`
-                  : nothing}
-              </path>
-              <path
-                class="wfc-wind-flag-tint"
                 style="fill: ${windFlagColor}"
                 d="M8 4 C15 1 20 4 25 8 C31 13 36 12 42 8 Q46 8 46 12 L46 14 Q46 18 42 18 C37 19 32 21 25 16 C18 11 14 12 8 20 Z"
               >
