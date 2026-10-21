@@ -173,11 +173,11 @@ export class WfcWindIndicator extends LitElement {
           <g transform="rotate(${flagRotation} 8 9)">
             <path
               class="wfc-wind-flag-cloth ${isCalm ? "" : "is-moving"}"
-              d="M8 4 C16 4 22 6 28 5 C34 4 39 5 44 6 L44 18 C37 17 32 16 27 18 C20 20 14 17 8 20 Z"
+              d="M8 4 C15 1 20 4 25 8 C31 13 36 12 44 9 L44 15 C37 20 32 21 25 16 C18 11 14 12 8 20 Z"
             />
             <path
               class="wfc-wind-flag-fold"
-              d="M9 11 C17 10 22 13 29 12 C35 11 39 12 43 12"
+              d="M9 8 C16 5 20 8 25 12 C31 17 37 17 43 13"
             />
           </g>
         </svg>
