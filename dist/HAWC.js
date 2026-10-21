@@ -225,6 +225,9 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
     .wfc-wind-flag-cloth {
       fill: #f4f6f7;
     }
+    .wfc-wind-flag-tint {
+      pointer-events: none;
+    }
     .wfc-wind-flag-accent {
       fill: #d94b50;
       pointer-events: none;
@@ -248,13 +251,17 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
     }
     .wfc-wind-speed-unit {
       font-size: 60%;
+      font-weight: 400;
+      paint-order: normal;
+      stroke: none;
+      stroke-width: 0;
     }
-  `;render(){var t;let e,i,r;if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let a=this.forecast.wind_speed??0,s=i5(this.hass,this.weatherEntity,"wind_speed"),o="entity"===this.displayUnit?"km/h":this.displayUnit,n=le(a,s,o),l=n??a,c=void 0===n?s:o,h=re(this.forecast),d=le(a,s,"km/h")??0,u=Math.round(l),f=this.computeLineColor(),p=h;void 0!==p&&"direction"===this.type&&(p=(p+180)%360);let g=Number.isFinite(p),m=d<=2,y=Math.max(0,Math.min(1,(d-3)/37)),b=(t=d)<25?"rgb(255, 255, 255)":(e=[255,165,0],i=[235,45,35],r=Math.max(0,Math.min(1,(t-25)/15)),`rgb(${e.map((t,e)=>Math.round(t+(i[e]-t)*r)).join(", ")})`),_=m?90:g&&void 0!==p?p-90:0,v=_*Math.PI/180,w=8+18*Math.cos(v)-3*Math.sin(v),x=9+18*Math.sin(v)+3*Math.cos(v),k=2.2-1.8*y,M=1+6*y,$="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,S=!m&&!$,A=Array.from({length:17},(t,e)=>{let i=2*Math.PI*e/16;return[Math.sin(i),Math.sin(i-.8),Math.sin(i-1.6),Math.sin(i-2.4),Math.sin(i-3.2)]}),C=A.map((t,e)=>e/(A.length-1)).join(";"),z=A.map(([t,e,i,r,a])=>{let s=8+a*M*.45,o=18+a*M*.45;return`M8 4 C14 ${4+t*M} 18 ${4+e*M} 24 ${5+i*M} C31 ${6+r*M} 37 ${5+a*M} 42 ${s} Q46 ${s} 46 ${s+4} L46 ${o-4} Q46 ${o} 42 ${o} C37 ${19+a*M} 31 ${17+r*M} 25 ${17+i*M} C19 ${17+e*M} 14 ${18+t*M} 8 20 Z`}),E=A.map(([t,e,i,r,a])=>`M9 8 C16 ${8+t*M*.55} 20 ${8+e*M*.55} 25 ${12+i*M*.55} C31 ${16+r*M*.55} 37 ${16+a*M*.55} 43 13`),T=A.map(([t,e,i,r,a])=>`M8 4 C14 ${4+t*M} 18 ${4+e*M} 24 ${5+i*M} C31 ${6+r*M} 37 ${6+a*M} 44 5 Q46 5 46 6.5 L46 7.5 Q46 8 44 8 C37 ${8+a*M} 31 ${8+r*M} 25 ${7+i*M} C19 ${6+e*M} 14 ${6+t*M} 8 7 Z`),P=Math.max(0,Math.min(.12,(d-30)/10*.12)),O=`${u} ${c}`;return eX`
+  `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?"km/h":this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<=2,f=Math.max(0,Math.min(1,(n-3)/37)),p=(t=>{let e,i;if(t<25)return"rgba(255, 165, 0, 0)";let r=Math.max(0,Math.min(1,(t-25)/15));return(e=[255,165,0],i=[235,45,35],`rgb(${e.map((t,e)=>Math.round(t+(i[e]-t)*r)).join(", ")})`).replace("rgb(","rgba(").replace(")",`, ${.08+.34*r})`)})(n),g=u?90:d&&void 0!==h?h-90:0,m=g*Math.PI/180,y=8+18*Math.cos(m)-3*Math.sin(m),b=9+18*Math.sin(m)+3*Math.cos(m),_=2.2-1.8*f,v=1+6*f,w="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,x=!u&&!w,k=Array.from({length:17},(t,e)=>{let i=2*Math.PI*e/16;return[Math.sin(i),Math.sin(i-.8),Math.sin(i-1.6),Math.sin(i-2.4),Math.sin(i-3.2)]}),M=k.map((t,e)=>e/(k.length-1)).join(";"),$=k.map(([t,e,i,r,a])=>{let s=8+a*v*.45,o=18+a*v*.45;return`M8 4 C14 ${4+t*v} 18 ${4+e*v} 24 ${5+i*v} C31 ${6+r*v} 37 ${5+a*v} 42 ${s} Q46 ${s} 46 ${s+4} L46 ${o-4} Q46 ${o} 42 ${o} C37 ${19+a*v} 31 ${17+r*v} 25 ${17+i*v} C19 ${17+e*v} 14 ${18+t*v} 8 20 Z`}),S=k.map(([t,e,i,r,a])=>`M9 8 C16 ${8+t*v*.55} 20 ${8+e*v*.55} 25 ${12+i*v*.55} C31 ${16+r*v*.55} 37 ${16+a*v*.55} 43 13`),A=k.map(([t,e,i,r,a])=>`M8 4 C14 ${4+t*v} 18 ${4+e*v} 24 ${5+i*v} C31 ${6+r*v} 37 ${6+a*v} 44 5 Q46 5 46 6.5 L46 7.5 Q46 8 44 8 C37 ${8+a*v} 31 ${8+r*v} 25 ${7+i*v} C19 ${6+e*v} 14 ${6+t*v} 8 7 Z`),C=Math.max(0,Math.min(.12,(n-30)/10*.12)),z=`${l} ${s}`;return eX`
       <div
         class="wfc-wind-indicator"
         role="img"
-        aria-label="${g?"direction"===this.type?`Wind speed: ${O}, blowing toward ${p} degrees`:`Wind speed: ${O}, bearing from ${p} degrees`:`Wind speed: ${O}`}"
-        style="color: ${f}"
+        aria-label="${d?"direction"===this.type?`Wind speed: ${z}, blowing toward ${h} degrees`:`Wind speed: ${z}, bearing from ${h} degrees`:`Wind speed: ${z}`}"
+        style="color: ${c}"
       >
         <svg
           class="wfc-wind-flag"
@@ -263,33 +270,47 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
           viewBox="0 0 48 48"
           aria-hidden="true"
         >
-          <g transform="translate(${24-w} ${20-x})">
+          <g transform="translate(${24-y} ${20-b})">
             <path class="wfc-wind-flag-mast" d="M8 3v26" />
-            <g transform="rotate(${_} 8 9)">
+            <g transform="rotate(${g} 8 9)">
               <path
                 class="wfc-wind-flag-cloth"
-                style="fill: ${b}"
+                style="fill: ${p}"
                 d="M8 4 C15 1 20 4 25 8 C31 13 36 12 42 8 Q46 8 46 12 L46 14 Q46 18 42 18 C37 19 32 21 25 16 C18 11 14 12 8 20 Z"
               >
-                ${S?eq`<animate
+                ${x?eq`<animate
                       attributeName="d"
-                      dur="${k}s"
-                      values="${z.join(";")}"
-                      keyTimes="${C}"
+                      dur="${_}s"
+                      values="${$.join(";")}"
+                      keyTimes="${M}"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />`:eG}
+              </path>
+              <path
+                class="wfc-wind-flag-tint"
+                style="fill: ${p}"
+                d="M8 4 C15 1 20 4 25 8 C31 13 36 12 42 8 Q46 8 46 12 L46 14 Q46 18 42 18 C37 19 32 21 25 16 C18 11 14 12 8 20 Z"
+              >
+                ${x?eq`<animate
+                      attributeName="d"
+                      dur="${_}s"
+                      values="${$.join(";")}"
+                      keyTimes="${M}"
                       calcMode="linear"
                       repeatCount="indefinite"
                     />`:eG}
               </path>
               <path
                 class="wfc-wind-flag-accent"
-                d="${T[0]}"
-                style="opacity: ${P}"
+                d="${A[0]}"
+                style="opacity: ${C}"
               >
-                ${S&&P>0?eq`<animate
+                ${x&&C>0?eq`<animate
                       attributeName="d"
-                      dur="${k}s"
-                      values="${T.join(";")}"
-                      keyTimes="${C}"
+                      dur="${_}s"
+                      values="${A.join(";")}"
+                      keyTimes="${M}"
                       calcMode="linear"
                       repeatCount="indefinite"
                     />`:eG}
@@ -298,18 +319,18 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
                 class="wfc-wind-flag-fold"
                 d="M9 8 C16 5 20 8 25 12 C31 17 37 17 43 13"
               >
-                ${S?eq`<animate
+                ${x?eq`<animate
                       attributeName="d"
-                      dur="${k}s"
-                      values="${E.join(";")}"
-                      keyTimes="${C}"
+                      dur="${_}s"
+                      values="${S.join(";")}"
+                      keyTimes="${M}"
                       calcMode="linear"
                       repeatCount="indefinite"
                     />`:eG}
               </path>
             </g>
           </g>
-          <text class="wfc-wind-speed" x="24" y="46">${u}<tspan class="wfc-wind-speed-unit" dx="2.5" text-anchor="start">${c}</tspan></text>
+          <text class="wfc-wind-speed" x="24" y="46">${l}<tspan class="wfc-wind-speed-unit" dx="2.5" text-anchor="start">${s}</tspan></text>
         </svg>
       </div>
     `}computeLineColor(){let t=i7(this.hass,this.weatherEntity,this.forecast);return!t||t<=3?"var(--wfc-wind-low)":t<=8?"var(--wfc-wind-medium)":"var(--wfc-wind-high)"}constructor(...t){super(...t),this.size=35,this.type="bearing",this.displayUnit="entity"}}k([ew({attribute:!1})],li.prototype,"hass",void 0),k([ew({attribute:!1})],li.prototype,"weatherEntity",void 0),k([ew({attribute:!1})],li.prototype,"forecast",void 0),k([ew({attribute:!1})],li.prototype,"size",void 0),k([ew({attribute:!1})],li.prototype,"type",void 0),k([ew({attribute:!1})],li.prototype,"displayUnit",void 0),li=k([t8("wfc-wind-indicator")],li);class lr extends it{createRenderRoot(){return this}render(){return this.forecast?eX`

@@ -315,20 +315,20 @@ describe("wfc-wind-indicator", () => {
   describe("wind speed colors", () => {
     it("should keep the flag white below 25 km/h", async () => {
       const element = await createFixture({ windSpeed: 24 / 3.6, windBearing: 0 });
-      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(255, 255, 255)");
+      const tint = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-tint");
+      expect(tint?.style.fill).toBe("rgba(255, 165, 0, 0)");
     });
 
     it("should start orange at 25 km/h", async () => {
       const element = await createFixture({ windSpeed: 25 / 3.6, windBearing: 0 });
-      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(255, 165, 0)");
+      const tint = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-tint");
+      expect(tint?.style.fill).toBe("rgba(255, 165, 0, 0.08)");
     });
 
     it("should fade toward red as speed rises to 40 km/h", async () => {
       const element = await createFixture({ windSpeed: 40 / 3.6, windBearing: 0 });
-      const cloth = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-cloth");
-      expect(cloth?.style.fill).toBe("rgb(235, 45, 35)");
+      const tint = element.shadowRoot?.querySelector<SVGPathElement>(".wfc-wind-flag-tint");
+      expect(tint?.style.fill).toBe("rgba(235, 45, 35, 0.42)");
     });
   });
 
