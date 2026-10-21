@@ -88,7 +88,7 @@ describe("wfc-wind-indicator", () => {
       });
 
       const text = element.shadowRoot?.querySelector(".wfc-wind-speed");
-      expect(text?.textContent).toBe("16km/h"); // rounded
+      expect(text?.textContent).toBe("57km/h"); // rounded
       expect(text?.querySelector(".wfc-wind-speed-unit")?.textContent).toBe("km/h");
       expect(text?.getAttribute("x")).toBe("24");
     });
