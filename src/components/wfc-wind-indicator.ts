@@ -131,19 +131,32 @@ export class WfcWindIndicator extends LitElement {
     const speedRatio = Math.max(0, Math.min(1, (windSpeedKmh - 2) / 38));
     const flagRotation =
       isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
-    const animationDuration = 2.2 - 1.8 * speedRatio;
+    const baseAnimationDuration = 2.2 - 1.8 * speedRatio;
+    const mediumSpeedBoost =
+      0.4 *
+      (speedRatio <= 0.42
+        ? speedRatio / 0.42
+        : (1 - speedRatio) / 0.58);
+    const animationDuration = baseAnimationDuration / (1 + mediumSpeedBoost);
     const wave = 1 + 6 * speedRatio;
     const reduceMotion =
       typeof window !== "undefined" &&
       window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     const shouldAnimate = !isCalm && !reduceMotion;
-    const wavePhases = [
-      [-1, 0, 1, 1, 0],
-      [0, -1, 0, 1, 1],
-      [1, 0, -1, 0, 1],
-      [1, 1, 0, -1, 0],
-      [-1, 0, 1, 1, 0],
-    ] as const;
+    const wavePhases: readonly (readonly [number, number, number, number, number])[] =
+      Array.from({ length: 17 }, (_, frame) => {
+        const phase = (2 * Math.PI * frame) / 16;
+        return [
+          Math.sin(phase),
+          Math.sin(phase - 0.8),
+          Math.sin(phase - 1.6),
+          Math.sin(phase - 2.4),
+          Math.sin(phase - 3.2),
+        ] as const;
+      });
+    const waveKeyTimes = wavePhases
+      .map((_, frame) => frame / (wavePhases.length - 1))
+      .join(";");
     const flagFrames = wavePhases.map(([a, b, c, d, e]) => {
       const y14 = 4 + a * wave;
       const y18 = 4 + b * wave;
@@ -190,9 +203,8 @@ export class WfcWindIndicator extends LitElement {
                     attributeName="d"
                     dur="${animationDuration}s"
                     values="${flagFrames.join(";")}"
-                    keyTimes="0;0.25;0.5;0.75;1"
-                    calcMode="spline"
-                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
+                    keyTimes="${waveKeyTimes}"
+                    calcMode="linear"
                     repeatCount="indefinite"
                   />`
                 : nothing}
@@ -207,9 +219,8 @@ export class WfcWindIndicator extends LitElement {
                     attributeName="d"
                     dur="${animationDuration}s"
                     values="${accentFrames.join(";")}"
-                    keyTimes="0;0.25;0.5;0.75;1"
-                    calcMode="spline"
-                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
+                    keyTimes="${waveKeyTimes}"
+                    calcMode="linear"
                     repeatCount="indefinite"
                   />`
                 : nothing}
@@ -223,9 +234,8 @@ export class WfcWindIndicator extends LitElement {
                     attributeName="d"
                     dur="${animationDuration}s"
                     values="${foldFrames.join(";")}"
-                    keyTimes="0;0.25;0.5;0.75;1"
-                    calcMode="spline"
-                    keySplines="0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1;0.35 0 0.65 1"
+                    keyTimes="${waveKeyTimes}"
+                    calcMode="linear"
                     repeatCount="indefinite"
                   />`
                 : nothing}
