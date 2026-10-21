@@ -117,7 +117,7 @@ export class WfcWindIndicator extends LitElement {
       fill: var(--primary-text-color);
       font-size: 16px;
       font-weight: 600;
-      text-anchor: end;
+      text-anchor: middle;
       paint-order: stroke;
       stroke: var(--ha-card-background, var(--card-background-color, #1a2634));
       stroke-width: 3.5px;
@@ -156,6 +156,11 @@ export class WfcWindIndicator extends LitElement {
     const windFlagColor = getWindFlagColor(windSpeedKmh);
     const flagRotation =
       isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
+    const flagAngle = (flagRotation * Math.PI) / 180;
+    const flagCenterX = 8 + 18 * Math.cos(flagAngle) - 3 * Math.sin(flagAngle);
+    const flagCenterY = 9 + 18 * Math.sin(flagAngle) + 3 * Math.cos(flagAngle);
+    const flagOffsetX = 24 - flagCenterX;
+    const flagOffsetY = 20 - flagCenterY;
     const baseAnimationDuration = 2.2 - 1.8 * speedRatio;
     const mediumSpeedBoost =
       0.4 *
@@ -188,13 +193,15 @@ export class WfcWindIndicator extends LitElement {
       const y24 = 5 + c * wave;
       const y31 = 6 + d * wave;
       const y37 = 5 + e * wave;
-      return `M8 4 C14 ${y14} 18 ${y18} 24 ${y24} C31 ${y31} 37 ${y37} 44 5 L44 18 C37 ${19 + e * wave} 31 ${17 + d * wave} 25 ${17 + c * wave} C19 ${17 + b * wave} 14 ${18 + a * wave} 8 20 Z`;
+      const topTip = 5 + e * wave;
+      const bottomTip = 18 + e * wave;
+      return `M8 4 C14 ${y14} 18 ${y18} 24 ${y24} C31 ${y31} 37 ${y37} 44 ${topTip} Q46 ${topTip} 46 ${topTip + 3} L46 ${bottomTip - 3} Q46 ${bottomTip} 43 ${bottomTip} C37 ${19 + e * wave} 31 ${17 + d * wave} 25 ${17 + c * wave} C19 ${17 + b * wave} 14 ${18 + a * wave} 8 20 Z`;
     });
     const foldFrames = wavePhases.map(([a, b, c, d, e]) =>
       `M9 8 C16 ${8 + a * wave * 0.55} 20 ${8 + b * wave * 0.55} 25 ${12 + c * wave * 0.55} C31 ${16 + d * wave * 0.55} 37 ${16 + e * wave * 0.55} 43 13`
     );
     const accentFrames = wavePhases.map(([a, b, c, d, e]) =>
-      `M8 4 C14 ${4 + a * wave} 18 ${4 + b * wave} 24 ${5 + c * wave} C31 ${6 + d * wave} 37 ${6 + e * wave} 44 5 L44 7 C37 ${8 + e * wave} 31 ${8 + d * wave} 25 ${7 + c * wave} C19 ${6 + b * wave} 14 ${6 + a * wave} 8 7 Z`
+      `M8 4 C14 ${4 + a * wave} 18 ${4 + b * wave} 24 ${5 + c * wave} C31 ${6 + d * wave} 37 ${6 + e * wave} 44 5 Q46 5 46 6.5 L46 7.5 Q46 8 44 8 C37 ${8 + e * wave} 31 ${8 + d * wave} 25 ${7 + c * wave} C19 ${6 + b * wave} 14 ${6 + a * wave} 8 7 Z`
     );
     const accentOpacity = Math.max(
       0,
@@ -216,61 +223,63 @@ export class WfcWindIndicator extends LitElement {
         <svg
           class="wfc-wind-flag"
           width="${this.size}"
-          height="24"
-          viewBox="0 0 48 32"
+          height="${this.size}"
+          viewBox="0 0 48 48"
           aria-hidden="true"
         >
-          <path class="wfc-wind-flag-mast" d="M8 3v26" />
-          <g transform="rotate(${flagRotation} 8 9)">
-            <path
-              class="wfc-wind-flag-cloth"
-              style="fill: ${windFlagColor}"
-              d="M8 4 C15 1 20 4 25 8 C31 13 36 12 44 9 L44 15 C37 20 32 21 25 16 C18 11 14 12 8 20 Z"
-            >
-              ${shouldAnimate
-                ? svg`<animate
-                    attributeName="d"
-                    dur="${animationDuration}s"
-                    values="${flagFrames.join(";")}"
-                    keyTimes="${waveKeyTimes}"
-                    calcMode="linear"
-                    repeatCount="indefinite"
-                  />`
-                : nothing}
-            </path>
-            <path
-              class="wfc-wind-flag-accent"
-              d="${accentFrames[0]}"
-              style="opacity: ${accentOpacity}"
-            >
-              ${shouldAnimate && accentOpacity > 0
-                ? svg`<animate
-                    attributeName="d"
-                    dur="${animationDuration}s"
-                    values="${accentFrames.join(";")}"
-                    keyTimes="${waveKeyTimes}"
-                    calcMode="linear"
-                    repeatCount="indefinite"
-                  />`
-                : nothing}
-            </path>
-            <path
-              class="wfc-wind-flag-fold"
-              d="M9 8 C16 5 20 8 25 12 C31 17 37 17 43 13"
-            >
-              ${shouldAnimate
-                ? svg`<animate
-                    attributeName="d"
-                    dur="${animationDuration}s"
-                    values="${foldFrames.join(";")}"
-                    keyTimes="${waveKeyTimes}"
-                    calcMode="linear"
-                    repeatCount="indefinite"
-                  />`
-                : nothing}
-            </path>
+          <g transform="translate(${flagOffsetX} ${flagOffsetY})">
+            <path class="wfc-wind-flag-mast" d="M8 3v26" />
+            <g transform="rotate(${flagRotation} 8 9)">
+              <path
+                class="wfc-wind-flag-cloth"
+                style="fill: ${windFlagColor}"
+                d="M8 4 C15 1 20 4 25 8 C31 13 36 12 44 9 Q46 9 46 11 L46 13 Q46 15 44 15 C37 20 32 21 25 16 C18 11 14 12 8 20 Z"
+              >
+                ${shouldAnimate
+                  ? svg`<animate
+                      attributeName="d"
+                      dur="${animationDuration}s"
+                      values="${flagFrames.join(";")}"
+                      keyTimes="${waveKeyTimes}"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />`
+                  : nothing}
+              </path>
+              <path
+                class="wfc-wind-flag-accent"
+                d="${accentFrames[0]}"
+                style="opacity: ${accentOpacity}"
+              >
+                ${shouldAnimate && accentOpacity > 0
+                  ? svg`<animate
+                      attributeName="d"
+                      dur="${animationDuration}s"
+                      values="${accentFrames.join(";")}"
+                      keyTimes="${waveKeyTimes}"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />`
+                  : nothing}
+              </path>
+              <path
+                class="wfc-wind-flag-fold"
+                d="M9 8 C16 5 20 8 25 12 C31 17 37 17 43 13"
+              >
+                ${shouldAnimate
+                  ? svg`<animate
+                      attributeName="d"
+                      dur="${animationDuration}s"
+                      values="${foldFrames.join(";")}"
+                      keyTimes="${waveKeyTimes}"
+                      calcMode="linear"
+                      repeatCount="indefinite"
+                    />`
+                  : nothing}
+              </path>
+            </g>
           </g>
-          <text class="wfc-wind-speed" x="47" y="31">${speed}</text>
+          <text class="wfc-wind-speed" x="24" y="46">${speed}</text>
         </svg>
       </div>
     `;
