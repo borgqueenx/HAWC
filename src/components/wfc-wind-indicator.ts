@@ -48,6 +48,30 @@ const convertWindSpeed = (
   return (speed * fromFactor) / toFactor;
 };
 
+const blendColor = (
+  start: readonly [number, number, number],
+  end: readonly [number, number, number],
+  amount: number
+): string =>
+  `rgb(${start
+    .map((channel, index) =>
+      Math.round(channel + (end[index] - channel) * amount)
+    )
+    .join(", ")})`;
+
+const getWindFlagColor = (speedKmh: number): string => {
+  const middleYellow: readonly [number, number, number] = [255, 249, 226];
+  const highWindRed: readonly [number, number, number] = [255, 239, 238];
+
+  if (speedKmh <= 2) {
+    return "rgb(255, 255, 255)";
+  }
+  if (speedKmh <= 20) {
+    return blendColor([255, 255, 255], middleYellow, (speedKmh - 2) / 18);
+  }
+  return blendColor(middleYellow, highWindRed, (speedKmh - 20) / 20);
+};
+
 @customElement("wfc-wind-indicator")
 export class WfcWindIndicator extends LitElement {
   @property({ attribute: false }) hass!: ExtendedHomeAssistant;
@@ -129,6 +153,7 @@ export class WfcWindIndicator extends LitElement {
     const hasBearing = Number.isFinite(bearing);
     const isCalm = windSpeedKmh < 2;
     const speedRatio = Math.max(0, Math.min(1, (windSpeedKmh - 2) / 38));
+    const windFlagColor = getWindFlagColor(windSpeedKmh);
     const flagRotation =
       isCalm ? 90 : hasBearing && bearing !== undefined ? bearing - 90 : 0;
     const baseAnimationDuration = 2.2 - 1.8 * speedRatio;
@@ -171,7 +196,10 @@ export class WfcWindIndicator extends LitElement {
     const accentFrames = wavePhases.map(([a, b, c, d, e]) =>
       `M8 4 C14 ${4 + a * wave} 18 ${4 + b * wave} 24 ${5 + c * wave} C31 ${6 + d * wave} 37 ${6 + e * wave} 44 5 L44 7 C37 ${8 + e * wave} 31 ${8 + d * wave} 25 ${7 + c * wave} C19 ${6 + b * wave} 14 ${6 + a * wave} 8 7 Z`
     );
-    const accentOpacity = Math.max(0, Math.min(0.38, ((windSpeedKmh - 22) / 18) * 0.38));
+    const accentOpacity = Math.max(
+      0,
+      Math.min(0.12, ((windSpeedKmh - 30) / 10) * 0.12)
+    );
     const speedLabel = `${speed} ${shownUnit}`;
 
     return html`
@@ -196,6 +224,7 @@ export class WfcWindIndicator extends LitElement {
           <g transform="rotate(${flagRotation} 8 9)">
             <path
               class="wfc-wind-flag-cloth"
+              style="fill: ${windFlagColor}"
               d="M8 4 C15 1 20 4 25 8 C31 13 36 12 44 9 L44 15 C37 20 32 21 25 16 C18 11 14 12 8 20 Z"
             >
               ${shouldAnimate
