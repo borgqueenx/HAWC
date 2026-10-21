@@ -233,12 +233,14 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
       pointer-events: none;
     }
     .wfc-wind-speed {
-      color: var(--primary-text-color);
-      font-size: var(--ha-font-size-xs, 12px);
+      fill: var(--primary-text-color);
+      font-size: 16px;
       font-weight: 600;
-      line-height: 14px;
-      text-align: center;
-      white-space: nowrap;
+      text-anchor: end;
+      paint-order: stroke;
+      stroke: var(--ha-card-background, var(--card-background-color, #1a2634));
+      stroke-width: 3.5px;
+      stroke-linejoin: round;
     }
   `;render(){if(!this.hass||!this.forecast||!this.weatherEntity)return eG;let t=this.forecast.wind_speed??0,e=i5(this.hass,this.weatherEntity,"wind_speed"),i="entity"===this.displayUnit?e:this.displayUnit,r=le(t,e,i),a=r??t,s=void 0===r?e:i,o=re(this.forecast),n=le(t,e,"km/h")??0,l=Math.round(a),c=this.computeLineColor(),h=o;void 0!==h&&"direction"===this.type&&(h=(h+180)%360);let d=Number.isFinite(h),u=n<2,f=Math.max(0,Math.min(1,(n-2)/38)),p=u?90:d&&void 0!==h?h-90:0,g=2.2-1.8*f,m=1+6*f,y="u">typeof window&&window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,b=!u&&!y,_=[[-1,0,1,1,0],[0,-1,0,1,1],[1,0,-1,0,1],[1,1,0,-1,0],[-1,0,1,1,0]],v=_.map(([t,e,i,r,a])=>`M8 4 C14 ${4+t*m} 18 ${4+e*m} 24 ${5+i*m} C31 ${6+r*m} 37 ${5+a*m} 44 5 L44 18 C37 ${19+a*m} 31 ${17+r*m} 25 ${17+i*m} C19 ${17+e*m} 14 ${18+t*m} 8 20 Z`),w=_.map(([t,e,i,r,a])=>`M9 8 C16 ${8+t*m*.55} 20 ${8+e*m*.55} 25 ${12+i*m*.55} C31 ${16+r*m*.55} 37 ${16+a*m*.55} 43 13`),x=`${l} ${s}`;return eX`
       <div
@@ -285,8 +287,8 @@ let t,e;function i(t,e,i,r){Object.defineProperty(t,e,{get:i,set:r,enumerable:!0
                   />`:eG}
             </path>
           </g>
+          <text class="wfc-wind-speed" x="47" y="31">${l}</text>
         </svg>
-        <span class="wfc-wind-speed">${l}</span>
       </div>
     `}computeLineColor(){let t=i7(this.hass,this.weatherEntity,this.forecast);return!t||t<=3?"var(--wfc-wind-low)":t<=8?"var(--wfc-wind-medium)":"var(--wfc-wind-high)"}constructor(...t){super(...t),this.size=35,this.type="bearing",this.displayUnit="entity"}}k([ew({attribute:!1})],li.prototype,"hass",void 0),k([ew({attribute:!1})],li.prototype,"weatherEntity",void 0),k([ew({attribute:!1})],li.prototype,"forecast",void 0),k([ew({attribute:!1})],li.prototype,"size",void 0),k([ew({attribute:!1})],li.prototype,"type",void 0),k([ew({attribute:!1})],li.prototype,"displayUnit",void 0),li=k([t8("wfc-wind-indicator")],li);class lr extends it{createRenderRoot(){return this}render(){return this.forecast?eX`
       <div class="wfc-forecast-slot-info">

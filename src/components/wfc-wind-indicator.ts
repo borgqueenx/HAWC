@@ -86,12 +86,14 @@ export class WfcWindIndicator extends LitElement {
       pointer-events: none;
     }
     .wfc-wind-speed {
-      color: var(--primary-text-color);
-      font-size: var(--ha-font-size-xs, 12px);
+      fill: var(--primary-text-color);
+      font-size: 16px;
       font-weight: 600;
-      line-height: 14px;
-      text-align: center;
-      white-space: nowrap;
+      text-anchor: end;
+      paint-order: stroke;
+      stroke: var(--ha-card-background, var(--card-background-color, #1a2634));
+      stroke-width: 3.5px;
+      stroke-linejoin: round;
     }
   `;
 
@@ -204,8 +206,8 @@ export class WfcWindIndicator extends LitElement {
                 : nothing}
             </path>
           </g>
+          <text class="wfc-wind-speed" x="47" y="31">${speed}</text>
         </svg>
-        <span class="wfc-wind-speed">${speed}</span>
       </div>
     `;
   }
